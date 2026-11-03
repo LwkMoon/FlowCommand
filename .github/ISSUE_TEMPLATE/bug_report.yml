@@ -1,0 +1,57 @@
+name: Bug report
+description: Something does not work as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Never paste API keys, personal paths or private transcripts.** Redact logs first.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you say or type, and what did FlowCommand do? What did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Double-tap the trigger key
+        2. Say "..."
+        3. See the result
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: FlowCommand version
+      description: Shown when you hover the tray icon.
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: Windows 11 23H2 / Windows 10 22H2
+    validations:
+      required: true
+  - type: input
+    id: provider
+    attributes:
+      label: AI provider and model
+      placeholder: gemini / gemini-3.5-flash-lite
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log lines (redacted)
+      description: Tray menu, Open log folder. Transcripts are not logged unless you turned that on.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I removed API keys, personal paths and private text from everything I pasted.
+          required: true

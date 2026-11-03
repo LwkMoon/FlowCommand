@@ -1,0 +1,32 @@
+name: Feature request
+description: Suggest a new action, app, website or improvement
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Describe the task, ideally with the sentence you would say.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behaviour
+      description: What should FlowCommand do, and how should it confirm or report the result?
+  - type: dropdown
+    id: risk
+    attributes:
+      label: How risky could this action be?
+      description: Anything that deletes or changes data, or reaches the network, needs discussion first.
+      options:
+        - Low (opens or shows something)
+        - Moderate (changes a setting or closes something)
+        - High (destructive or hard to undo)
+        - Not an action (config, app, website, docs)
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

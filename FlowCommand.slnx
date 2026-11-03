@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/FlowCommand.Core/FlowCommand.Core.csproj" />
+  <Project Path="src/FlowCommand/FlowCommand.csproj" />
+  <Project Path="tests/FlowCommand.Tests/FlowCommand.Tests.csproj" />
+</Solution>

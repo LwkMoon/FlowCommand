@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="390" viewBox="0 0 1200 390" role="img" aria-labelledby="title desc">
+  <title id="title">FlowCommand — voice-controlled Windows actions</title>
+  <desc id="desc">A dark indigo banner showing a command palette and the flow from Wispr Flow transcription through AI interpretation to Windows actions.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#050816"/>
+      <stop offset="0.55" stop-color="#0b1233"/>
+      <stop offset="1" stop-color="#151c49"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="85%" cy="46%" r="60%">
+      <stop offset="0" stop-color="#667bd1" stop-opacity=".27"/>
+      <stop offset="1" stop-color="#667bd1" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#111b46"/>
+      <stop offset="1" stop-color="#080e29"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#90a4f4"/>
+      <stop offset="1" stop-color="#7dd3fc"/>
+    </linearGradient>
+    <filter id="softGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="16"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="390" rx="18" fill="url(#bg)"/>
+  <rect width="1200" height="390" rx="18" fill="url(#glow)"/>
+  <g fill="#e9edf7" opacity=".55">
+    <circle cx="70" cy="56" r="1.2"/><circle cx="170" cy="320" r="1"/><circle cx="330" cy="48" r=".9"/>
+    <circle cx="490" cy="340" r="1.1"/><circle cx="590" cy="90" r=".8"/><circle cx="720" cy="35" r="1"/>
+    <circle cx="1090" cy="65" r="1.2"/><circle cx="1150" cy="300" r=".9"/><circle cx="990" cy="355" r="1"/>
+    <circle cx="860" cy="28" r=".8"/><circle cx="40" cy="220" r=".8"/><circle cx="405" cy="185" r=".7"/>
+  </g>
+  <g transform="translate(66 62)">
+    <rect x="0" y="0" width="210" height="31" rx="15.5" fill="#182454" stroke="#394987"/>
+    <circle cx="17" cy="15.5" r="4" fill="#7dd3fc"/>
+    <text x="31" y="20.5" fill="#b9c7f4" font-family="Segoe UI, Arial, sans-serif" font-size="12" letter-spacing="1.4">WINDOWS COMMAND BRIDGE</text>
+    <text x="0" y="112" fill="#f4f6ff" font-family="Georgia, 'Times New Roman', serif" font-size="62" font-weight="700">FlowCommand</text>
+    <text x="2" y="158" fill="#a9b8e8" font-family="Segoe UI, Arial, sans-serif" font-size="24">Speak naturally. Let Windows do the rest.</text>
+    <text x="2" y="202" fill="#8395d0" font-family="Segoe UI, Arial, sans-serif" font-size="16">Wispr Flow handles the words. AI maps intent to approved local actions.</text>
+    <g transform="translate(0 246)" font-family="Segoe UI, Arial, sans-serif" font-size="13">
+      <rect x="0" y="0" width="124" height="32" rx="16" fill="#17224d" stroke="#3a4b8d"/>
+      <text x="62" y="21" text-anchor="middle" fill="#dce4ff">No audio capture</text>
+      <rect x="136" y="0" width="126" height="32" rx="16" fill="#17224d" stroke="#3a4b8d"/>
+      <text x="199" y="21" text-anchor="middle" fill="#dce4ff">Bring your API key</text>
+      <rect x="274" y="0" width="136" height="32" rx="16" fill="#17224d" stroke="#3a4b8d"/>
+      <text x="342" y="21" text-anchor="middle" fill="#dce4ff">Local execution</text>
+    </g>
+  </g>
+  <g transform="translate(680 62)">
+    <circle cx="228" cy="148" r="145" fill="#667bd1" opacity=".13" filter="url(#softGlow)"/>
+    <rect x="0" y="0" width="448" height="248" rx="14" fill="url(#panel)" stroke="#394987" stroke-width="1.5"/>
+    <path d="M14 0h420a14 14 0 0 1 14 14v30H0V14A14 14 0 0 1 14 0Z" fill="#182454"/>
+    <circle cx="20" cy="22" r="4" fill="#f28d9a"/><circle cx="36" cy="22" r="4" fill="#e9c77b"/><circle cx="52" cy="22" r="4" fill="#80c9a8"/>
+    <text x="72" y="26" fill="#aebce8" font-family="Segoe UI, Arial, sans-serif" font-size="12">FLOWCOMMAND  /  COMMAND PALETTE</text>
+    <rect x="22" y="69" width="404" height="54" rx="7" fill="#080f2b" stroke="#485ba0"/>
+    <text x="40" y="102" fill="#edf2ff" font-family="Segoe UI, Arial, sans-serif" font-size="18">Open my frontage project</text>
+    <rect x="22" y="143" width="404" height="42" rx="7" fill="#101a40" stroke="#293b78"/>
+    <circle cx="44" cy="164" r="5" fill="#7dd3fc"/>
+    <text x="60" y="169" fill="#cad5fb" font-family="Segoe UI, Arial, sans-serif" font-size="13">Interpreting one approved action…</text>
+    <g transform="translate(22 204)" font-family="Segoe UI, Arial, sans-serif" font-size="11">
+      <text x="0" y="14" fill="#8598d5">WISPR FLOW</text><path d="M83 10h32m-6-5 6 5-6 5" fill="none" stroke="#7388d3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="126" y="14" fill="#8598d5">AI PLAN</text><path d="M188 10h32m-6-5 6 5-6 5" fill="none" stroke="#7388d3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="232" y="14" fill="#8598d5">WINDOWS ACTION</text>
+    </g>
+    <g transform="translate(346 267)">
+      <circle cx="37" cy="37" r="37" fill="#cfd8f0" opacity=".11" filter="url(#softGlow)"/>
+      <circle cx="37" cy="37" r="29" fill="#121d4a" stroke="#5569af"/>
+      <path d="M37 11a26 26 0 1 0 26 26A24 24 0 0 1 37 11Z" fill="#e9edf7" opacity=".9"/>
+      <path d="M37 11a26 26 0 0 1 0 52" fill="none" stroke="#93a6dc" stroke-width="1.5"/>
+    </g>
+  </g>
+  <rect x="1" y="1" width="1198" height="388" rx="17" fill="none" stroke="#28356f" stroke-width="1.5"/>
+</svg>

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- 10.0.17763 = Windows 10 1809, the oldest build the WinRT Radio API projection needs here. -->
+    <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms> <!-- only for the tray NotifyIcon -->
+    <!-- Disabled on purpose: WPF + WinForms implicit usings create ambiguous type names. -->
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>FlowCommand</AssemblyName>
+    <RootNamespace>FlowCommand</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FlowCommand.Core\FlowCommand.Core.csproj" />
+  </ItemGroup>
+</Project>

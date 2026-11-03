@@ -1,0 +1,27 @@
+# Build output
+bin/
+obj/
+dist/
+artifacts/
+publish/
+TestResults/
+
+# IDE and editor files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.rsuser
+
+# Local configuration, secrets and logs: never commit these
+config.json
+*.secret
+*.key
+secrets/
+logs/
+*.log
+
+# OS files
+Thumbs.db
+.DS_Store

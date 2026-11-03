@@ -1,0 +1,952 @@
+{
+  // FlowCommand example configuration. Copy any section into %APPDATA%\FlowCommand\config.json.
+  // Comments and trailing commas are allowed. This file never contains secrets: API keys are stored
+  // encrypted with Windows DPAPI (Settings window) or read from GEMINI_API_KEY / GOOGLE_API_KEY / ANTHROPIC_API_KEY.
+
+  "configVersion": 2,
+
+  // ---- AI provider ----
+  "provider": "gemini",                  // "gemini" or "anthropic"
+  "model": "gemini-3.5-flash-lite",      // any model id your key can use, e.g. "gemini-3.8-flash" or "claude-haiku-5-5"
+  "geminiThinkingLevel": "low",          // Gemini only: minimal | low | medium | high | "" (model default). Lower is faster.
+  "requestTimeoutSeconds": 30,           // 5-60
+
+  // ---- how the palette opens ----
+  "doubleTapEnabled": true,              // double-tap a key to open the palette
+  "doubleTapKey": "backtick",            // backtick (the key left of 1) | capslock | scrolllock | pause
+  "doubleTapIntervalMs": 400,            // maximum gap between the two taps (150-1000)
+  "ignoreWhenTextBoxFocused": true,      // ignore the double-tap while a text box has focus (normal dictation is untouched)
+  "openWhenFocusUnknown": true,          // if focus cannot be classified, open anyway
+  "webContentProcesses": ["chrome", "msedge", "firefox", "opera", "brave", "vivaldi", "code", "cursor", "slack", "discord", "teams", "notion", "obsidian"],
+  "hotkey": "",                          // optional extra shortcut such as "Ctrl+Alt+Space". Always opens the palette, even from a text box.
+
+  // ---- submitting what Wispr Flow inserts ----
+  "autoSubmitMode": "paste",             // paste | idle | off
+  "autoSubmitDelayMs": 900,              // quiet period before auto-submit (200-5000)
+  "pasteThresholdChars": 4,
+  "reclaimFocusAfterAction": true,       // return focus to the palette after an action so the next dictation lands in it
+
+  // ---- safety ----
+  "dryRun": false,                       // interpret commands but never run them
+  "confirmModerateActions": false,       // ask before moderate-risk actions (close app, Bluetooth, lock, port inspection)
+  "confirmAllActions": false,
+  "useConversationContext": true,        // lets "actually, the other one" work; kept in memory for ten minutes at most
+  "logTranscripts": false,               // include dictated text in the local log
+
+  // Allowlist. An action that is not listed here can never run, whatever the AI answers.
+  // Remove entries to disable features (for example "kill_process_on_port" or "lock_workstation").
+  "enabledActions": [
+    "open_application",
+    "close_application",
+    "activate_window",
+    "minimize_window",
+    "maximize_window",
+    "restore_window",
+    "show_desktop",
+    "restore_windows",
+    "open_folder",
+    "open_project",
+    "open_settings",
+    "bluetooth_set",
+    "inspect_port",
+    "kill_process_on_port",
+    "media_control",
+    "lock_workstation",
+    "take_screenshot",
+    "open_website",
+    "search_web"
+  ],
+
+  // "Open my browser", "open my editor" and similar requests resolve to these application ids.
+  // On first run FlowCommand points "browser" at your Windows default browser when it can detect it.
+  "defaultApps": {
+    "browser": "chrome",
+    "editor": "vscode",
+    "terminal": "terminal",
+    "email": "outlook",
+    "music": "spotify",
+    "chat": "discord",
+    "video": "vlc",
+    "notes": "notepad",
+    "office": "word"
+  },
+
+  // ---- websites and web search ----
+  "searchUrl": "https://www.google.com/search?q={query}",  // https only, must contain {query}. Try https://duckduckgo.com/?q={query}
+  "websiteBrowser": "",                  // "" = your Windows default browser, or an application id such as "chrome"
+
+  // Say "open GitHub" or "open Gmail". Add your own: "name": "https://..." (http and https only).
+  "websites": {
+    "google": "https://www.google.com",
+    "gmail": "https://mail.google.com",
+    "google drive": "https://drive.google.com",
+    "google docs": "https://docs.google.com",
+    "google sheets": "https://sheets.google.com",
+    "google slides": "https://slides.google.com",
+    "google calendar": "https://calendar.google.com",
+    "google maps": "https://maps.google.com",
+    "google photos": "https://photos.google.com",
+    "google translate": "https://translate.google.com",
+    "google meet": "https://meet.google.com",
+    "ai studio": "https://aistudio.google.com",
+    "google cloud console": "https://console.cloud.google.com",
+    "youtube": "https://www.youtube.com",
+    "youtube music": "https://music.youtube.com",
+    "netflix": "https://www.netflix.com",
+    "prime video": "https://www.primevideo.com",
+    "disney plus": "https://www.disneyplus.com",
+    "twitch": "https://www.twitch.tv",
+    "spotify web": "https://open.spotify.com",
+    "soundcloud": "https://soundcloud.com",
+    "imdb": "https://www.imdb.com",
+    "github": "https://github.com",
+    "gitlab": "https://gitlab.com",
+    "stack overflow": "https://stackoverflow.com",
+    "microsoft learn": "https://learn.microsoft.com",
+    "mdn": "https://developer.mozilla.org",
+    "npm": "https://www.npmjs.com",
+    "nuget": "https://www.nuget.org",
+    "codepen": "https://codepen.io",
+    "vercel": "https://vercel.com",
+    "aws console": "https://console.aws.amazon.com",
+    "azure portal": "https://portal.azure.com",
+    "hugging face": "https://huggingface.co",
+    "kaggle": "https://www.kaggle.com",
+    "hacker news": "https://news.ycombinator.com",
+    "chatgpt": "https://chatgpt.com",
+    "claude": "https://claude.ai",
+    "gemini": "https://gemini.google.com",
+    "perplexity": "https://www.perplexity.ai",
+    "anthropic console": "https://console.anthropic.com",
+    "reddit": "https://www.reddit.com",
+    "x": "https://x.com",
+    "twitter": "https://x.com",
+    "linkedin": "https://www.linkedin.com",
+    "facebook": "https://www.facebook.com",
+    "instagram": "https://www.instagram.com",
+    "tiktok": "https://www.tiktok.com",
+    "pinterest": "https://www.pinterest.com",
+    "whatsapp web": "https://web.whatsapp.com",
+    "telegram web": "https://web.telegram.org",
+    "discord web": "https://discord.com/app",
+    "slack web": "https://app.slack.com",
+    "teams web": "https://teams.microsoft.com",
+    "zoom web": "https://zoom.us",
+    "outlook web": "https://outlook.office.com",
+    "onedrive": "https://onedrive.live.com",
+    "office": "https://www.office.com",
+    "notion web": "https://www.notion.so",
+    "trello": "https://trello.com",
+    "figma web": "https://www.figma.com",
+    "canva": "https://www.canva.com",
+    "dropbox": "https://www.dropbox.com",
+    "wikipedia": "https://www.wikipedia.org",
+    "amazon": "https://www.amazon.com",
+    "ebay": "https://www.ebay.com",
+    "medium": "https://medium.com",
+    "bbc news": "https://www.bbc.com/news",
+    "weather": "https://weather.com"
+  },
+
+  // Every entry answers to its id, display name and aliases.
+  // "processName" (no .exe) is only needed to close, switch to, minimise or maximise an app.
+  // "paths" are tried first; otherwise Start Menu shortcuts and registered App Paths are used.
+  // Apps without a process name can still be opened (File Explorer, Calculator and other Store apps, Windows tools).
+  // To add an app, copy any entry and change it. Remove entries you don't want the AI to know about.
+  "applications": {
+    "chrome": {
+      "displayName": "Google Chrome",
+      "category": "browser",
+      "processName": "chrome",
+      "aliases": [
+        "chrome",
+        "google chrome"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Google\\Chrome\\Application\\chrome.exe",
+        "%ProgramFiles(x86)%\\Google\\Chrome\\Application\\chrome.exe",
+        "%LocalAppData%\\Google\\Chrome\\Application\\chrome.exe"
+      ]
+    },
+    "edge": {
+      "displayName": "Microsoft Edge",
+      "category": "browser",
+      "processName": "msedge",
+      "aliases": [
+        "edge",
+        "microsoft edge"
+      ],
+      "paths": [
+        "%ProgramFiles(x86)%\\Microsoft\\Edge\\Application\\msedge.exe",
+        "%ProgramFiles%\\Microsoft\\Edge\\Application\\msedge.exe"
+      ]
+    },
+    "firefox": {
+      "displayName": "Firefox",
+      "category": "browser",
+      "processName": "firefox",
+      "aliases": [
+        "firefox",
+        "mozilla firefox"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Mozilla Firefox\\firefox.exe",
+        "%ProgramFiles(x86)%\\Mozilla Firefox\\firefox.exe"
+      ]
+    },
+    "operagx": {
+      "displayName": "Opera GX",
+      "category": "browser",
+      "processName": "opera",
+      "pathContains": "Opera GX",
+      "aliases": [
+        "opera gx",
+        "operagx",
+        "gx"
+      ],
+      "paths": [
+        "%LocalAppData%\\Programs\\Opera GX\\launcher.exe",
+        "%ProgramFiles%\\Opera GX\\launcher.exe"
+      ]
+    },
+    "opera": {
+      "displayName": "Opera",
+      "category": "browser",
+      "processName": "opera",
+      "pathContains": "\\Opera\\",
+      "aliases": [
+        "opera",
+        "opera browser"
+      ],
+      "paths": [
+        "%LocalAppData%\\Programs\\Opera\\launcher.exe",
+        "%ProgramFiles%\\Opera\\launcher.exe"
+      ]
+    },
+    "brave": {
+      "displayName": "Brave",
+      "category": "browser",
+      "processName": "brave",
+      "aliases": [
+        "brave",
+        "brave browser"
+      ],
+      "paths": [
+        "%ProgramFiles%\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
+        "%LocalAppData%\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+      ]
+    },
+    "vivaldi": {
+      "displayName": "Vivaldi",
+      "category": "browser",
+      "processName": "vivaldi",
+      "aliases": [
+        "vivaldi"
+      ],
+      "paths": [
+        "%LocalAppData%\\Vivaldi\\Application\\vivaldi.exe",
+        "%ProgramFiles%\\Vivaldi\\Application\\vivaldi.exe"
+      ]
+    },
+    "vscode": {
+      "displayName": "Visual Studio Code",
+      "category": "editor",
+      "processName": "Code",
+      "aliases": [
+        "vs code",
+        "vscode",
+        "code",
+        "visual studio code"
+      ],
+      "paths": [
+        "%LocalAppData%\\Programs\\Microsoft VS Code\\Code.exe",
+        "%ProgramFiles%\\Microsoft VS Code\\Code.exe"
+      ]
+    },
+    "cursor": {
+      "displayName": "Cursor",
+      "category": "editor",
+      "processName": "Cursor",
+      "aliases": [
+        "cursor",
+        "cursor editor"
+      ],
+      "paths": [
+        "%LocalAppData%\\Programs\\cursor\\Cursor.exe"
+      ]
+    },
+    "notepad": {
+      "displayName": "Notepad",
+      "category": "editor",
+      "processName": "notepad",
+      "aliases": [
+        "notepad"
+      ],
+      "paths": [
+        "%SystemRoot%\\System32\\notepad.exe"
+      ]
+    },
+    "notepadpp": {
+      "displayName": "Notepad++",
+      "category": "editor",
+      "processName": "notepad++",
+      "aliases": [
+        "notepad++",
+        "notepad plus plus"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Notepad++\\notepad++.exe",
+        "%ProgramFiles(x86)%\\Notepad++\\notepad++.exe"
+      ]
+    },
+    "sublime": {
+      "displayName": "Sublime Text",
+      "category": "editor",
+      "processName": "sublime_text",
+      "aliases": [
+        "sublime",
+        "sublime text"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Sublime Text\\sublime_text.exe"
+      ]
+    },
+    "visualstudio": {
+      "displayName": "Visual Studio",
+      "category": "ide",
+      "processName": "devenv",
+      "aliases": [
+        "visual studio"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\devenv.exe",
+        "%ProgramFiles%\\Microsoft Visual Studio\\2022\\Professional\\Common7\\IDE\\devenv.exe",
+        "%ProgramFiles%\\Microsoft Visual Studio\\2022\\Enterprise\\Common7\\IDE\\devenv.exe",
+        "%ProgramFiles%\\Microsoft Visual Studio\\18\\Community\\Common7\\IDE\\devenv.exe",
+        "%ProgramFiles%\\Microsoft Visual Studio\\18\\Professional\\Common7\\IDE\\devenv.exe",
+        "%ProgramFiles%\\Microsoft Visual Studio\\18\\Enterprise\\Common7\\IDE\\devenv.exe"
+      ]
+    },
+    "intellij": {
+      "displayName": "IntelliJ IDEA",
+      "category": "ide",
+      "processName": "idea64",
+      "aliases": [
+        "intellij",
+        "idea",
+        "intellij idea"
+      ]
+    },
+    "pycharm": {
+      "displayName": "PyCharm",
+      "category": "ide",
+      "processName": "pycharm64",
+      "aliases": [
+        "pycharm"
+      ]
+    },
+    "androidstudio": {
+      "displayName": "Android Studio",
+      "category": "ide",
+      "processName": "studio64",
+      "aliases": [
+        "android studio"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Android\\Android Studio\\bin\\studio64.exe"
+      ]
+    },
+    "githubdesktop": {
+      "displayName": "GitHub Desktop",
+      "category": "dev",
+      "processName": "GitHubDesktop",
+      "aliases": [
+        "github desktop"
+      ],
+      "paths": [
+        "%LocalAppData%\\GitHubDesktop\\GitHubDesktop.exe"
+      ]
+    },
+    "postman": {
+      "displayName": "Postman",
+      "category": "dev",
+      "processName": "Postman",
+      "aliases": [
+        "postman"
+      ],
+      "paths": [
+        "%LocalAppData%\\Postman\\Postman.exe"
+      ]
+    },
+    "docker": {
+      "displayName": "Docker Desktop",
+      "category": "dev",
+      "processName": "Docker Desktop",
+      "aliases": [
+        "docker",
+        "docker desktop"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Docker\\Docker\\Docker Desktop.exe"
+      ]
+    },
+    "terminal": {
+      "displayName": "Windows Terminal",
+      "category": "terminal",
+      "processName": "WindowsTerminal",
+      "aliases": [
+        "terminal",
+        "windows terminal",
+        "wt"
+      ],
+      "paths": [
+        "%LocalAppData%\\Microsoft\\WindowsApps\\wt.exe"
+      ]
+    },
+    "cmd": {
+      "displayName": "Command Prompt",
+      "category": "terminal",
+      "aliases": [
+        "command prompt",
+        "cmd",
+        "cmd.exe"
+      ],
+      "paths": [
+        "%SystemRoot%\\System32\\cmd.exe"
+      ]
+    },
+    "powershell": {
+      "displayName": "PowerShell",
+      "category": "terminal",
+      "aliases": [
+        "powershell",
+        "power shell",
+        "windows powershell"
+      ],
+      "paths": [
+        "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+      ]
+    },
+    "word": {
+      "displayName": "Microsoft Word",
+      "category": "office",
+      "processName": "WINWORD",
+      "aliases": [
+        "word",
+        "microsoft word",
+        "ms word"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Microsoft Office\\root\\Office16\\WINWORD.EXE",
+        "%ProgramFiles(x86)%\\Microsoft Office\\root\\Office16\\WINWORD.EXE"
+      ]
+    },
+    "excel": {
+      "displayName": "Microsoft Excel",
+      "category": "office",
+      "processName": "EXCEL",
+      "aliases": [
+        "excel",
+        "microsoft excel",
+        "ms excel"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Microsoft Office\\root\\Office16\\EXCEL.EXE",
+        "%ProgramFiles(x86)%\\Microsoft Office\\root\\Office16\\EXCEL.EXE"
+      ]
+    },
+    "powerpoint": {
+      "displayName": "Microsoft PowerPoint",
+      "category": "office",
+      "processName": "POWERPNT",
+      "aliases": [
+        "powerpoint",
+        "power point",
+        "microsoft powerpoint"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Microsoft Office\\root\\Office16\\POWERPNT.EXE",
+        "%ProgramFiles(x86)%\\Microsoft Office\\root\\Office16\\POWERPNT.EXE"
+      ]
+    },
+    "outlook": {
+      "displayName": "Microsoft Outlook",
+      "category": "email",
+      "processName": "OUTLOOK",
+      "aliases": [
+        "outlook",
+        "microsoft outlook"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE",
+        "%ProgramFiles(x86)%\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
+      ]
+    },
+    "onenote": {
+      "displayName": "OneNote",
+      "category": "notes",
+      "processName": "ONENOTE",
+      "aliases": [
+        "onenote",
+        "one note"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Microsoft Office\\root\\Office16\\ONENOTE.EXE",
+        "%ProgramFiles(x86)%\\Microsoft Office\\root\\Office16\\ONENOTE.EXE"
+      ]
+    },
+    "thunderbird": {
+      "displayName": "Thunderbird",
+      "category": "email",
+      "processName": "thunderbird",
+      "aliases": [
+        "thunderbird"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Mozilla Thunderbird\\thunderbird.exe",
+        "%ProgramFiles(x86)%\\Mozilla Thunderbird\\thunderbird.exe"
+      ]
+    },
+    "notion": {
+      "displayName": "Notion",
+      "category": "notes",
+      "processName": "Notion",
+      "aliases": [
+        "notion"
+      ],
+      "paths": [
+        "%LocalAppData%\\Programs\\Notion\\Notion.exe"
+      ]
+    },
+    "obsidian": {
+      "displayName": "Obsidian",
+      "category": "notes",
+      "processName": "Obsidian",
+      "aliases": [
+        "obsidian"
+      ],
+      "paths": [
+        "%LocalAppData%\\Programs\\Obsidian\\Obsidian.exe"
+      ]
+    },
+    "acrobat": {
+      "displayName": "Adobe Acrobat",
+      "category": "pdf",
+      "processName": "Acrobat",
+      "aliases": [
+        "acrobat",
+        "adobe acrobat",
+        "pdf reader"
+      ]
+    },
+    "discord": {
+      "displayName": "Discord",
+      "category": "chat",
+      "processName": "Discord",
+      "aliases": [
+        "discord"
+      ]
+    },
+    "slack": {
+      "displayName": "Slack",
+      "category": "chat",
+      "processName": "slack",
+      "aliases": [
+        "slack"
+      ],
+      "paths": [
+        "%LocalAppData%\\slack\\slack.exe"
+      ]
+    },
+    "teams": {
+      "displayName": "Microsoft Teams",
+      "category": "chat",
+      "processName": "ms-teams",
+      "aliases": [
+        "teams",
+        "microsoft teams"
+      ]
+    },
+    "zoom": {
+      "displayName": "Zoom",
+      "category": "meeting",
+      "processName": "Zoom",
+      "aliases": [
+        "zoom"
+      ],
+      "paths": [
+        "%AppData%\\Zoom\\bin\\Zoom.exe",
+        "%ProgramFiles%\\Zoom\\bin\\Zoom.exe"
+      ]
+    },
+    "telegram": {
+      "displayName": "Telegram",
+      "category": "chat",
+      "processName": "Telegram",
+      "aliases": [
+        "telegram"
+      ],
+      "paths": [
+        "%AppData%\\Telegram Desktop\\Telegram.exe"
+      ]
+    },
+    "whatsapp": {
+      "displayName": "WhatsApp",
+      "category": "chat",
+      "aliases": [
+        "whatsapp",
+        "whats app"
+      ]
+    },
+    "signal": {
+      "displayName": "Signal",
+      "category": "chat",
+      "processName": "Signal",
+      "aliases": [
+        "signal"
+      ],
+      "paths": [
+        "%LocalAppData%\\Programs\\signal-desktop\\Signal.exe"
+      ]
+    },
+    "spotify": {
+      "displayName": "Spotify",
+      "category": "music",
+      "processName": "Spotify",
+      "aliases": [
+        "spotify"
+      ],
+      "paths": [
+        "%AppData%\\Spotify\\Spotify.exe"
+      ]
+    },
+    "vlc": {
+      "displayName": "VLC",
+      "category": "video",
+      "processName": "vlc",
+      "aliases": [
+        "vlc",
+        "vlc media player"
+      ],
+      "paths": [
+        "%ProgramFiles%\\VideoLAN\\VLC\\vlc.exe",
+        "%ProgramFiles(x86)%\\VideoLAN\\VLC\\vlc.exe"
+      ]
+    },
+    "obs": {
+      "displayName": "OBS Studio",
+      "category": "recording",
+      "processName": "obs64",
+      "aliases": [
+        "obs",
+        "obs studio"
+      ],
+      "paths": [
+        "%ProgramFiles%\\obs-studio\\bin\\64bit\\obs64.exe"
+      ]
+    },
+    "audacity": {
+      "displayName": "Audacity",
+      "category": "audio",
+      "processName": "audacity",
+      "aliases": [
+        "audacity"
+      ],
+      "paths": [
+        "%ProgramFiles%\\Audacity\\audacity.exe"
+      ]
+    },
+    "davinci": {
+      "displayName": "DaVinci Resolve",
+      "category": "video",
+      "processName": "Resolve",
+      "aliases": [
+        "davinci resolve",
+        "davinci",
+        "resolve"
+      ]
+    },
+    "photoshop": {
+      "displayName": "Adobe Photoshop",
+      "category": "design",
+      "processName": "Photoshop",
+      "aliases": [
+        "photoshop",
+        "adobe photoshop"
+      ]
+    },
+    "illustrator": {
+      "displayName": "Adobe Illustrator",
+      "category": "design",
+      "processName": "Illustrator",
+      "aliases": [
+        "illustrator",
+        "adobe illustrator"
+      ]
+    },
+    "premiere": {
+      "displayName": "Adobe Premiere Pro",
+      "category": "video",
+      "processName": "Adobe Premiere Pro",
+      "aliases": [
+        "premiere",
+        "premiere pro",
+        "adobe premiere"
+      ]
+    },
+    "figma": {
+      "displayName": "Figma",
+      "category": "design",
+      "processName": "Figma",
+      "aliases": [
+        "figma"
+      ],
+      "paths": [
+        "%LocalAppData%\\Figma\\Figma.exe"
+      ]
+    },
+    "blender": {
+      "displayName": "Blender",
+      "category": "3d",
+      "processName": "blender",
+      "aliases": [
+        "blender"
+      ]
+    },
+    "steam": {
+      "displayName": "Steam",
+      "category": "games",
+      "processName": "steam",
+      "aliases": [
+        "steam"
+      ],
+      "paths": [
+        "%ProgramFiles(x86)%\\Steam\\steam.exe",
+        "%ProgramFiles%\\Steam\\steam.exe"
+      ]
+    },
+    "epicgames": {
+      "displayName": "Epic Games Launcher",
+      "category": "games",
+      "processName": "EpicGamesLauncher",
+      "aliases": [
+        "epic games",
+        "epic",
+        "epic games launcher"
+      ],
+      "paths": [
+        "%ProgramFiles(x86)%\\Epic Games\\Launcher\\Portal\\Binaries\\Win64\\EpicGamesLauncher.exe"
+      ]
+    },
+    "taskmanager": {
+      "displayName": "Task Manager",
+      "category": "utility",
+      "processName": "Taskmgr",
+      "aliases": [
+        "task manager",
+        "taskmgr"
+      ],
+      "paths": [
+        "%SystemRoot%\\System32\\Taskmgr.exe"
+      ]
+    },
+    "fileexplorer": {
+      "displayName": "File Explorer",
+      "category": "utility",
+      "aliases": [
+        "file explorer",
+        "explorer"
+      ],
+      "paths": [
+        "%SystemRoot%\\explorer.exe"
+      ]
+    },
+    "calculator": {
+      "displayName": "Calculator",
+      "category": "utility",
+      "aliases": [
+        "calculator",
+        "calc"
+      ],
+      "paths": [
+        "%SystemRoot%\\System32\\calc.exe"
+      ]
+    },
+    "paint": {
+      "displayName": "Paint",
+      "category": "utility",
+      "aliases": [
+        "paint",
+        "mspaint"
+      ],
+      "paths": [
+        "%SystemRoot%\\System32\\mspaint.exe"
+      ]
+    },
+    "snippingtool": {
+      "displayName": "Snipping Tool",
+      "category": "utility",
+      "aliases": [
+        "snipping tool",
+        "snip"
+      ],
+      "paths": [
+        "%SystemRoot%\\System32\\SnippingTool.exe"
+      ]
+    },
+    "controlpanel": {
+      "displayName": "Control Panel",
+      "category": "utility",
+      "aliases": [
+        "control panel"
+      ],
+      "paths": [
+        "%SystemRoot%\\System32\\control.exe"
+      ]
+    },
+    "devicemanager": {
+      "displayName": "Device Manager",
+      "category": "utility",
+      "aliases": [
+        "device manager"
+      ],
+      "paths": [
+        "%SystemRoot%\\System32\\devmgmt.msc"
+      ]
+    },
+    "diskmanagement": {
+      "displayName": "Disk Management",
+      "category": "utility",
+      "aliases": [
+        "disk management"
+      ],
+      "paths": [
+        "%SystemRoot%\\System32\\diskmgmt.msc"
+      ]
+    },
+    "eventviewer": {
+      "displayName": "Event Viewer",
+      "category": "utility",
+      "aliases": [
+        "event viewer"
+      ],
+      "paths": [
+        "%SystemRoot%\\System32\\eventvwr.msc"
+      ]
+    },
+    "services": {
+      "displayName": "Services",
+      "category": "utility",
+      "aliases": [
+        "services",
+        "windows services"
+      ],
+      "paths": [
+        "%SystemRoot%\\System32\\services.msc"
+      ]
+    },
+    "resourcemonitor": {
+      "displayName": "Resource Monitor",
+      "category": "utility",
+      "aliases": [
+        "resource monitor",
+        "resmon"
+      ],
+      "paths": [
+        "%SystemRoot%\\System32\\resmon.exe"
+      ]
+    },
+    "sevenzip": {
+      "displayName": "7-Zip",
+      "category": "utility",
+      "processName": "7zFM",
+      "aliases": [
+        "7zip",
+        "7-zip",
+        "seven zip"
+      ],
+      "paths": [
+        "%ProgramFiles%\\7-Zip\\7zFM.exe",
+        "%ProgramFiles(x86)%\\7-Zip\\7zFM.exe"
+      ]
+    },
+    "powertoys": {
+      "displayName": "PowerToys",
+      "category": "utility",
+      "processName": "PowerToys",
+      "aliases": [
+        "powertoys",
+        "power toys"
+      ],
+      "paths": [
+        "%LocalAppData%\\PowerToys\\PowerToys.exe",
+        "%ProgramFiles%\\PowerToys\\PowerToys.exe"
+      ]
+    },
+    "bitwarden": {
+      "displayName": "Bitwarden",
+      "category": "passwords",
+      "processName": "Bitwarden",
+      "aliases": [
+        "bitwarden"
+      ],
+      "paths": [
+        "%LocalAppData%\\Programs\\Bitwarden\\Bitwarden.exe"
+      ]
+    },
+    "teamviewer": {
+      "displayName": "TeamViewer",
+      "category": "remote",
+      "processName": "TeamViewer",
+      "aliases": [
+        "teamviewer",
+        "team viewer"
+      ],
+      "paths": [
+        "%ProgramFiles%\\TeamViewer\\TeamViewer.exe",
+        "%ProgramFiles(x86)%\\TeamViewer\\TeamViewer.exe"
+      ]
+    }
+  },
+
+  // "Open my FrontAge project" opens the folder in the editor named here (an application id).
+  // Edit the paths, or delete these examples: they are samples and your folders will differ.
+  "projects": {
+    "frontage": {
+      "path": "%UserProfile%\\source\\repos\\FrontAge",
+      "aliases": [
+        "frontage",
+        "front age"
+      ],
+      "editor": "vscode"
+    },
+    "portfolio": {
+      "path": "%UserProfile%\\source\\repos\\portfolio-site",
+      "aliases": [
+        "my portfolio",
+        "portfolio site"
+      ],
+      "editor": "vscode"
+    },
+    "dotfiles": {
+      "path": "%UserProfile%\\dotfiles",
+      "aliases": [
+        "my dotfiles"
+      ],
+      "editor": "cursor"
+    }
+  },
+
+  // Extra folders you can name aloud: "open my invoices folder". Environment variables such as %UserProfile% are expanded.
+  // Built-in folders (downloads, documents, desktop, pictures, music, videos, home, screenshots, onedrive, appdata, temp, startup,
+  // recycle bin, this pc) are always available.
+  "folders": {
+    "projects": "%UserProfile%\\source\\repos",
+    "invoices": "%UserProfile%\\Documents\\Invoices",
+    "school": "%UserProfile%\\Documents\\School",
+    "work": "%UserProfile%\\Documents\\Work",
+    "captures": "%UserProfile%\\Videos\\Captures",
+    "wallpapers": "%UserProfile%\\Pictures\\Wallpapers",
+    "backups": "D:\\Backups"
+  }
+}
