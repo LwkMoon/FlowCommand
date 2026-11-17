@@ -11,7 +11,13 @@ namespace FlowCommand
 {
     public partial class App : Application
     {
+        private const string ActivateEventName = @"Local\FlowCommand.Activate";
+
         private Mutex? _mutex;
+        private EventWaitHandle? _activate;
+        private RegisteredWaitHandle? _activateWait;
+        private bool _paused;
+        private WelcomeWindow? _welcome;
         private ServiceHost? _host;
         private HotkeyService? _hotkeys;
         private DoubleTapKeyListener? _doubleTap;
@@ -26,17 +32,30 @@ namespace FlowCommand
             _mutex = new Mutex(true, @"Local\FlowCommand.SingleInstance", out var created);
             if (!created)
             {
-                MessageBox.Show("FlowCommand is already running (look for its tray icon).", "FlowCommand");
+                // Already running (it lives in the tray): ask the running copy to show its window instead of failing.
+                SignalRunningInstance();
+                _mutex.Dispose();
                 _mutex = null;
                 Shutdown();
                 return;
             }
+
+            _activate = new EventWaitHandle(false, EventResetMode.AutoReset, ActivateEventName);
+            _activateWait = ThreadPool.RegisterWaitForSingleObject(
+                _activate, (state, timedOut) => Dispatcher.BeginInvoke(new Action(OnActivateRequested)), null, Timeout.Infinite, false);
 
             DispatcherUnhandledException += (s, args) =>
             {
                 _host?.Log.Error("Unhandled UI exception", args.Exception);
                 MessageBox.Show("Unexpected error: " + args.Exception.Message + "\nSee the log from the tray menu.", "FlowCommand");
                 args.Handled = true;
+            };
+            AppDomain.CurrentDomain.UnhandledException += (s, args) =>
+                _host?.Log.Error("Fatal exception", args.ExceptionObject as Exception);
+            TaskScheduler.UnobservedTaskException += (s, args) =>
+            {
+                _host?.Log.Error("Unobserved task exception", args.Exception);
+                args.SetObserved();
             };
 
             _host = new ServiceHost();
@@ -45,21 +64,69 @@ namespace FlowCommand
             _hotkeys.Pressed += () => OnTrigger(false);
             _doubleTap = new DoubleTapKeyListener();
             _doubleTap.DoubleTapped += () => OnTrigger(true);
-            _tray = new TrayService(_host, ShowPalette, ShowSettings, OnConfigReloaded, ExitApp);
+            _tray = new TrayService(_host, ShowPalette, ShowSettings, OnConfigReloaded, ExitApp, () => _paused, SetPaused);
 
             var problem = ApplyTriggers();
+
+            if (_host.ConfigError != null)
+                _tray.Notify("Config problem", _host.ConfigError + " Using defaults until fixed.");
+
+            if (!_host.Config.FirstRunCompleted && _host.ConfigError == null)
+            {
+                ShowWelcome();      // first start: explain the product and let the person choose, before anything else
+                return;
+            }
+
             if (problem != null)
             {
                 _tray.Notify("Trigger problem", problem);
                 ShowSettings();
             }
-
-            if (_host.ConfigError != null)
-                _tray.Notify("Config problem", _host.ConfigError + " Using defaults until fixed.");
-            if (!_host.HasApiKey())
-                ShowSettings();
-            else if (problem == null)
+            else if (!_host.IsReady())
+            {
+                ShowSettings();     // an online provider is selected but no key is saved yet
+            }
+            else
+            {
                 _tray.Notify("FlowCommand is running", $"To open the command palette: {_host.Config.TriggerDescription()}.");
+            }
+        }
+
+        private static void SignalRunningInstance()
+        {
+            try
+            {
+                using (var ev = EventWaitHandle.OpenExisting(ActivateEventName)) ev.Set();
+            }
+            catch (Exception) { /* the first copy is still starting; nothing to do */ }
+        }
+
+        private void OnActivateRequested()
+        {
+            if (_host == null) return;
+            if (_welcome != null) { _welcome.Activate(); return; }
+            ShowSettings();
+        }
+
+        private void SetPaused(bool paused)
+        {
+            _paused = paused;
+            var problem = ApplyTriggers();
+            _tray?.SetPaused(paused);
+            _tray?.Notify(
+                paused ? "FlowCommand is paused" : "FlowCommand is listening again",
+                paused
+                    ? "It is not listening for the trigger key or hotkey. The tray icon still opens the palette."
+                    : problem ?? $"To open the command palette: {_host!.Config.TriggerDescription()}.");
+        }
+
+        private void ShowWelcome()
+        {
+            if (_welcome != null) { _welcome.Activate(); return; }
+            _welcome = new WelcomeWindow(_host!, ApplyTriggers, ShowSettings);
+            _welcome.Closed += (s, e) => _welcome = null;
+            _welcome.Show();
+            _welcome.Activate();
         }
 
         /// <summary>(Re)applies the configured triggers. Returns a problem description, or null when all is well.</summary>
@@ -69,6 +136,11 @@ namespace FlowCommand
             string? problem = null;
 
             _hotkeys!.Unregister();
+            if (_paused)
+            {
+                _doubleTap!.Stop();          // paused: no keyboard listener and no hotkey are active at all
+                return null;
+            }
             if (!string.IsNullOrWhiteSpace(cfg.Hotkey))
             {
                 var parsed = HotkeyParser.Parse(cfg.Hotkey);
@@ -154,6 +226,8 @@ namespace FlowCommand
 
         protected override void OnExit(ExitEventArgs e)
         {
+            try { _activateWait?.Unregister(null); } catch { }
+            _activate?.Dispose();
             try { _mutex?.ReleaseMutex(); } catch { }
             _mutex?.Dispose();
             base.OnExit(e);

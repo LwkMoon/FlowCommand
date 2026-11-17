@@ -16,8 +16,8 @@ public class ConfigStoreTests : IDisposable
     {
         var cfg = ConfigStore.Load(File_);
         Assert.True(File.Exists(File_));
-        Assert.Equal("gemini", cfg.Provider);
-        Assert.Equal("gemini-3.5-flash-lite", cfg.Model);
+        Assert.Equal("local", cfg.Provider);               // works offline out of the box; online AI is opt-in
+        Assert.Equal("offline", cfg.Model);
         Assert.Contains("chrome", cfg.Applications.Keys);
         Assert.Equal(ActionCatalog.DefaultEnabled().Count, cfg.EnabledActions.Count);
     }
@@ -170,7 +170,7 @@ public class TriggerConfigTests
     public void Defaults_follow_the_requested_behaviour()
     {
         var c = AppConfig.CreateDefault();
-        Assert.Equal("gemini", c.Provider);
+        Assert.Equal("local", c.Provider);
         Assert.True(c.DoubleTapEnabled);
         Assert.Equal("backtick", c.DoubleTapKey);
         Assert.True(c.IgnoreWhenTextBoxFocused);
@@ -213,7 +213,7 @@ public class TriggerConfigTests
         var b = a.Clone();
         b.Model = "other";
         b.EnabledActions.Clear();
-        Assert.Equal("gemini-3.5-flash-lite", a.Model);
+        Assert.Equal("offline", a.Model);
         Assert.NotEmpty(a.EnabledActions);
     }
 }

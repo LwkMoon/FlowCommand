@@ -93,8 +93,9 @@ public class ToolSchemaTests
 public class ProviderCatalogTests
 {
     [Theory]
-    [InlineData(null, "gemini")]
-    [InlineData("", "gemini")]
+    [InlineData(null, "local")]
+    [InlineData("", "local")]
+    [InlineData("  Local ", "local")]
     [InlineData("  GEMINI ", "gemini")]
     [InlineData("Anthropic", "anthropic")]
     public void Normalizes_names(string? input, string expected) => Assert.Equal(expected, ProviderCatalog.Normalize(input));
@@ -102,6 +103,7 @@ public class ProviderCatalogTests
     [Fact]
     public void Default_models_and_env_vars()
     {
+        Assert.Equal("offline", ProviderCatalog.DefaultModel("local"));
         Assert.Equal("gemini-3.5-flash-lite", ProviderCatalog.DefaultModel("gemini"));
         Assert.Equal("claude-haiku-5-5", ProviderCatalog.DefaultModel("anthropic"));
         Assert.Contains("GEMINI_API_KEY", ProviderCatalog.EnvVars("gemini"));

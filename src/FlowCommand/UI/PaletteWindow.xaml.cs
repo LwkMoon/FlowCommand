@@ -120,7 +120,7 @@ namespace FlowCommand.UI
             var hk = _host.Config.TriggerDescription();
             FooterHint.Text = focused
                 ? $"Enter run \u00B7 Esc cancel/close \u00B7 {hk} toggle"
-                : $"Not focused \u2014 dictated text won't arrive here. Press {hk} or click the palette.";
+                : $"Not focused - dictated text won't arrive here. Press {hk} or click the palette.";
             FooterHint.Foreground = (Brush)FindResource(focused ? "MutedBrush" : "WarnBrush");
         }
 

@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -19,7 +21,7 @@ namespace FlowCommand.UI
         private readonly ServiceHost _host;
         private readonly Func<string?> _applyTriggers;
         private readonly Dictionary<string, CheckBox> _actionBoxes = new Dictionary<string, CheckBox>();
-        private string _currentProvider = ProviderCatalog.Gemini;
+        private string _currentProvider = ProviderCatalog.Local;
         private bool _loading;
 
         internal SettingsWindow(ServiceHost host, Func<string?> applyTriggers)
@@ -31,7 +33,7 @@ namespace FlowCommand.UI
         }
 
         private string SelectedProvider() =>
-            (ProviderBox.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? ProviderCatalog.Gemini;
+            (ProviderBox.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? ProviderCatalog.Local;
 
         private void Load()
         {
@@ -39,7 +41,7 @@ namespace FlowCommand.UI
             var c = _host.Config;
 
             var idx = ProviderCatalog.Names.ToList().IndexOf(ProviderCatalog.Normalize(c.Provider));
-            _currentProvider = idx >= 0 ? ProviderCatalog.Names[idx] : ProviderCatalog.Gemini;
+            _currentProvider = idx >= 0 ? ProviderCatalog.Names[idx] : ProviderCatalog.Local;
             ProviderBox.SelectedIndex = idx >= 0 ? idx : 0;
             ModelBox.Text = c.Model;
 
@@ -59,13 +61,25 @@ namespace FlowCommand.UI
             ContextBox.IsChecked = c.UseConversationContext;
             ReclaimBox.IsChecked = c.ReclaimFocusAfterAction;
             LogTranscriptsBox.IsChecked = c.LogTranscripts;
-            StartupBox.IsChecked = StartupRegistration.IsEnabled();
+            Loaded += async (s, e) =>
+            {
+                StartupBox.IsChecked = await StartupRegistration.IsEnabledAsync();
+                WisprStatus.Text = await Task.Run(() => WisprFlowDetector.IsRunning())
+                    ? "Wispr Flow appears to be running on this PC."
+                    : "Wispr Flow was not detected. That is fine: typing, Windows voice typing or any other dictation tool works too.";
+            };
+            WisprStatus.Text = "Checking...";
+            var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "";
+            AboutText.Text = $"FlowCommand {version}. Free, open source (MIT licence). Not affiliated with Wispr, Google, Anthropic or Microsoft. " +
+                "FlowCommand has no ads and no telemetry. Offline mode sends nothing anywhere; online AI modes send the text of each command to the provider you chose.";
+            DataLocationText.Text = "Your settings and saved keys are stored at: " + AppPaths.ConfigDir +
+                (PackageIdentity.IsPackaged ? " (removed automatically when you uninstall FlowCommand)." : ". Delete that folder to remove them when uninstalling.");
 
             foreach (var a in ActionCatalog.All.Where(x => !x.Meta))
             {
                 var cb = new CheckBox
                 {
-                    Content = $"{a.Name}  [{a.Risk}]  \u2014 {a.Description}",
+                    Content = $"{a.Name}  [{a.Risk}]  - {a.Description}",
                     IsChecked = c.EnabledActions.Contains(a.Name),
                     Margin = new Thickness(0, 2, 0, 2),
                     ToolTip = a.Description,
@@ -99,6 +113,13 @@ namespace FlowCommand.UI
 
         private void UpdateProviderNote()
         {
+            OnlineAiPanel.Visibility = ProviderCatalog.UsesApiKey(_currentProvider) ? Visibility.Visible : Visibility.Collapsed;
+            if (_currentProvider == ProviderCatalog.Local)
+            {
+                ProviderNote.Text = "Offline mode understands common commands (open apps, folders, websites and Settings pages, volume and media keys, screenshots, closing or switching windows) using rules on this PC. " +
+                    "Nothing is sent anywhere and no account is needed. For free-form wording, choose Google Gemini or Anthropic Claude and add your own API key.";
+                return;
+            }
             ProviderNote.Text = _currentProvider == ProviderCatalog.Gemini
                 ? "Create a key in Google AI Studio (aistudio.google.com). Privacy note: under Google's Gemini API terms, content sent on the free (unpaid) tier may be used to improve Google's products and may be reviewed by people; paid use with billing enabled is not. Don't send sensitive or personal information on the free tier, and check Google's current terms. Only your dictated text and a few recent commands are sent, never audio."
                 : "Anthropic API use is billed per use and is separate from a Claude.ai subscription. Create a key at console.anthropic.com. Only your dictated text and a few recent commands are sent, never audio.";
@@ -120,6 +141,7 @@ namespace FlowCommand.UI
 
         private void OnRemoveKey(object sender, RoutedEventArgs e)
         {
+            if (!ProviderCatalog.UsesApiKey(_currentProvider)) return;
             _host.Secrets.Delete(_currentProvider);
             KeyBox.Clear();
             RefreshKeyState();
@@ -129,7 +151,7 @@ namespace FlowCommand.UI
         private async void OnTest(object sender, RoutedEventArgs e)
         {
             TestButton.IsEnabled = false;
-            ShowTest("Contacting the AI\u2026", null);
+            ShowTest(SelectedProvider() == ProviderCatalog.Local ? "Checking..." : "Contacting the AI...", null);
             try
             {
                 var provider = SelectedProvider();
@@ -144,7 +166,7 @@ namespace FlowCommand.UI
                 var ai = AiProviderFactory.Create(temp, ServiceHost.Http, key);
                 var req = new AiRequest(temp.Model, PromptBuilder.BuildSystemPrompt(temp),
                     PromptBuilder.BuildUserMessage(sample, Array.Empty<Core.Pipeline.ConversationTurn>()),
-                    PromptBuilder.BuildTool(temp));
+                    PromptBuilder.BuildTool(temp), CommandText: sample);
 
                 var raw = await ai.GetPlanJsonAsync(req, CancellationToken.None);
                 var v = new PlanValidator(temp.EnabledActions).Validate(raw);
@@ -169,9 +191,50 @@ namespace FlowCommand.UI
             catch { MessageBox.Show("Couldn't open " + AppPaths.ConfigFile, "FlowCommand"); }
         }
 
+        private static void OpenUrl(string url)
+        {
+            try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
+            catch { MessageBox.Show("Couldn't open " + url, "FlowCommand"); }
+        }
+
+        private void OnPrivacy(object sender, RoutedEventArgs e) => OpenUrl(AppLinks.Privacy);
+        private void OnSupport(object sender, RoutedEventArgs e) => OpenUrl(AppLinks.Support);
+
+        private void OnOpenLogs(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                System.IO.Directory.CreateDirectory(AppPaths.LogDir);
+                Process.Start(new ProcessStartInfo(AppPaths.LogDir) { UseShellExecute = true });
+            }
+            catch { MessageBox.Show("Couldn't open " + AppPaths.LogDir, "FlowCommand"); }
+        }
+
+        private async void OnDeleteData(object sender, RoutedEventArgs e)
+        {
+            var answer = MessageBox.Show(
+                "This removes your FlowCommand settings, saved API keys and log from this PC, and turns off start-with-Windows. " +
+                "FlowCommand keeps running with default settings and shows its welcome screen the next time it starts.\n\nContinue?",
+                "Delete all my FlowCommand data", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+            if (answer != MessageBoxResult.Yes) return;
+
+            try
+            {
+                await StartupRegistration.SetAsync(false);
+                _host.DeleteAllData();
+                _applyTriggers();
+                MessageBox.Show("Your FlowCommand data was removed.", "FlowCommand");
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Couldn't remove everything: " + ex.Message, "FlowCommand");
+            }
+        }
+
         private void OnCancel(object sender, RoutedEventArgs e) => Close();
 
-        private void OnSave(object sender, RoutedEventArgs e)
+        private async void OnSave(object sender, RoutedEventArgs e)
         {
             var hotkeyText = HotkeyBox.Text.Trim();
             string hotkeyDisplay = "";
@@ -209,9 +272,8 @@ namespace FlowCommand.UI
 
             try
             {
-                if (KeyBox.Password.Trim().Length > 0)
+                if (ProviderCatalog.UsesApiKey(provider) && KeyBox.Password.Trim().Length > 0)
                     _host.Secrets.Set(provider, KeyBox.Password.Trim());
-                StartupRegistration.Set(StartupBox.IsChecked == true);
                 _host.SaveConfig();
             }
             catch (Exception ex)
@@ -219,6 +281,9 @@ namespace FlowCommand.UI
                 MessageBox.Show("Couldn't save: " + ex.Message, "FlowCommand");
                 return;
             }
+
+            var startupMessage = await StartupRegistration.SetAsync(StartupBox.IsChecked == true);
+            if (startupMessage != null) MessageBox.Show(startupMessage, "FlowCommand");
 
             var problem = _applyTriggers();
             if (problem != null) MessageBox.Show(problem + "\n\nYour other settings were saved.", "Trigger problem");

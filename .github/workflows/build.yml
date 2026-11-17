@@ -25,4 +25,59 @@ jobs:
         run: dotnet build FlowCommand.slnx -c Release --no-restore
 
       - name: Test
-        run: dotnet test tests/FlowCommand.Tests/FlowCommand.Tests.csproj -c Release --no-build --verbosity normal
+        run: dotnet test tests/FlowCommand.Tests/FlowCommand.Tests.csproj -c Release --no-build --verbosity normal --logger "trx;LogFileName=results.trx" --results-directory TestResults
+
+      - name: Dependency audit (known vulnerabilities fail the build)
+        shell: pwsh
+        run: |
+          $failed = $false
+          foreach ($proj in "src/FlowCommand/FlowCommand.csproj", "src/FlowCommand.Core/FlowCommand.Core.csproj", "tests/FlowCommand.Tests/FlowCommand.Tests.csproj") {
+            $v = dotnet list $proj package --vulnerable --include-transitive 2>&1 | Out-String
+            Write-Host $v
+            if ($v -match "has the following vulnerable packages") { $failed = $true }
+            $d = dotnet list $proj package --deprecated 2>&1 | Out-String
+            Write-Host $d
+          }
+          if ($failed) { throw "Vulnerable NuGet packages found. See the log above." }
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: TestResults
+
+  msix:
+    needs: build-and-test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build development MSIX (self-signed, for sideload testing only)
+        shell: pwsh
+        run: ./scripts/New-MsixPackage.ps1 -Target dev
+
+      - name: Verify package contents
+        shell: pwsh
+        run: |
+          $msix = Get-ChildItem artifacts/msix -Filter *.msix | Select-Object -First 1
+          $tool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\makeappx.exe" |
+                  Sort-Object FullName -Descending | Select-Object -First 1
+          & $tool.FullName unpack /p $msix.FullName /d artifacts/unpacked /o
+          if ($LASTEXITCODE -ne 0) { throw "makeappx unpack failed" }
+          foreach ($f in "FlowCommand.exe", "AppxManifest.xml", "resources.pri", "coreclr.dll", "Assets/StoreLogo.scale-200.png") {
+            if (-not (Test-Path "artifacts/unpacked/$f")) { throw "Missing from package: $f" }
+          }
+          if (Select-String -Path artifacts/unpacked/AppxManifest.xml -Pattern '\{\{') { throw "Unfilled token left in AppxManifest.xml" }
+          Write-Host "Package layout verified: $($msix.Name)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: flowcommand-msix-dev
+          path: |
+            artifacts/msix/*.msix
+            artifacts/msix/*.cer
+            artifacts/msix/SHA256SUMS.txt

@@ -9,7 +9,8 @@ public sealed class AiProviderException : Exception
 }
 
 /// <param name="Tool">Provider-neutral description of the single allowed output (each provider builds its own wire format).</param>
-public sealed record AiRequest(string Model, string SystemPrompt, string UserMessage, ToolDefinition Tool, int MaxTokens = 400);
+/// <param name="CommandText">The dictated or typed command on its own. Online providers ignore it (they get it inside UserMessage); the offline provider reads it.</param>
+public sealed record AiRequest(string Model, string SystemPrompt, string UserMessage, ToolDefinition Tool, int MaxTokens = 400, string? CommandText = null);
 
 /// <summary>
 /// Add a new provider by implementing this: take the request, return the raw JSON of the
@@ -36,6 +37,7 @@ public static class AiProviderFactory
     public static IAiProvider Create(Config.AppConfig cfg, HttpClient http, Func<string?> apiKey) =>
         ProviderCatalog.Normalize(cfg.Provider) switch
         {
+            ProviderCatalog.Local => new LocalRuleProvider(cfg),
             ProviderCatalog.Gemini => new GeminiProvider(http, apiKey, TimeSpan.FromSeconds(cfg.RequestTimeoutSeconds), cfg.GeminiThinkingLevel),
             ProviderCatalog.Anthropic => new AnthropicProvider(http, apiKey, TimeSpan.FromSeconds(cfg.RequestTimeoutSeconds)),
             var other => new UnavailableProvider(other, $"AI provider '{other}' is not supported. Supported: {string.Join(", ", ProviderCatalog.Names)}."),

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  MSIX manifest template for FlowCommand. Do not edit the double-brace placeholders: scripts/New-MsixPackage.ps1 fills them in.
+
+  For the Microsoft Store, Name, Publisher and PublisherDisplayName MUST be copied exactly from
+  Partner Center > your app > Product management > Product identity. They cannot be invented here.
+  See docs/store/PACKAGING.md.
+-->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap uap5 rescap">
+
+  <Identity Name="{{IDENTITY_NAME}}"
+            Publisher="{{PUBLISHER}}"
+            Version="{{VERSION}}"
+            ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>FlowCommand</DisplayName>
+    <PublisherDisplayName>{{PUBLISHER_DISPLAY_NAME}}</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <!-- 17763 = Windows 10 version 1809, the oldest build the app's APIs need. Raise it if you only test on newer builds. -->
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+
+  <Applications>
+    <Application Id="FlowCommand" Executable="FlowCommand.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="FlowCommand"
+        Description="A command palette that turns short spoken or typed commands into actions on your PC."
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+      </uap:VisualElements>
+
+      <Extensions>
+        <!-- Optional "start when I sign in". Declared disabled: the user turns it on in FlowCommand or in Windows Settings > Apps > Startup. -->
+        <uap5:Extension Category="windows.startupTask" Executable="FlowCommand.exe" EntryPoint="Windows.FullTrustApplication">
+          <uap5:StartupTask TaskId="FlowCommandStartup" Enabled="false" DisplayName="FlowCommand" />
+        </uap5:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <!-- A normal desktop (Win32/.NET) app: needed to run the existing program and its keyboard listener unchanged. -->
+    <rescap:Capability Name="runFullTrust" />
+    <!-- Only used when the person chooses an online AI provider and supplies their own key. -->
+    <Capability Name="internetClient" />
+    <!-- Only used by the optional "turn Bluetooth on or off" action (Windows Radio API). No microphone or camera capability is declared. -->
+    <DeviceCapability Name="radios" />
+  </Capabilities>
+</Package>

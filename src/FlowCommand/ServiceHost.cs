@@ -99,5 +99,31 @@ namespace FlowCommand
         }
 
         public bool HasApiKey() => !string.IsNullOrWhiteSpace(GetApiKey());
+
+        /// <summary>True when commands can be interpreted right now: offline mode always, an online provider only with a key.</summary>
+        public bool IsReady() => !ProviderCatalog.UsesApiKey(Config.Provider) || HasApiKey();
+
+        /// <summary>
+        /// Removes everything FlowCommand stores on this PC: saved API keys, settings and the log. The next start (or the
+        /// reload done here) recreates default settings. It never touches anything outside FlowCommand's own folders.
+        /// </summary>
+        public void DeleteAllData()
+        {
+            foreach (var name in ProviderCatalog.Names)
+            {
+                try { Secrets.Delete(name); } catch (Exception ex) { Log.Warn("Could not delete a saved key: " + ex.GetType().Name); }
+            }
+            TryDelete(AppPaths.ConfigFile);
+            TryDelete(AppPaths.ConfigFile + ".bad");
+            TryDelete(AppPaths.ConfigFile + ".tmp");
+            TryDelete(AppPaths.LogFile);
+            TryDelete(AppPaths.LogFile + ".old");
+            Reload();
+        }
+
+        private static void TryDelete(string path)
+        {
+            try { if (File.Exists(path)) File.Delete(path); } catch (IOException) { } catch (UnauthorizedAccessException) { }
+        }
     }
 }

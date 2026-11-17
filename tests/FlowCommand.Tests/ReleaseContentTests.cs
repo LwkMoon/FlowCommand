@@ -345,7 +345,7 @@ public class ConfigMigrationTests : IDisposable
         Assert.Equal(AppConfig.CurrentVersion, AppConfig.CreateDefault().ConfigVersion);
         var created = ConfigStore.Load(File_);
         Assert.Equal(AppConfig.CurrentVersion, created.ConfigVersion);
-        Assert.Contains("\"configVersion\": 2", File.ReadAllText(File_));
+        Assert.Contains($"\"configVersion\": {AppConfig.CurrentVersion}", File.ReadAllText(File_));
     }
 }
 

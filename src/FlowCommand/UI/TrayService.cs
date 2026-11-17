@@ -12,9 +12,12 @@ namespace FlowCommand.UI
     {
         private readonly NotifyIcon _icon;
         private readonly ToolStripMenuItem _dryRunItem;
+        private readonly ToolStripMenuItem _pauseItem;
         private readonly ServiceHost _host;
+        private readonly string _baseText;
 
-        public TrayService(ServiceHost host, Action openPalette, Action openSettings, Action reloaded, Action exit)
+        public TrayService(ServiceHost host, Action openPalette, Action openSettings, Action reloaded, Action exit,
+            Func<bool> isPaused, Action<bool> setPaused)
         {
             _host = host;
             var menu = new ContextMenuStrip();
@@ -29,6 +32,8 @@ namespace FlowCommand.UI
                 _host.SaveConfig();
                 Notify("Dry-run mode", _host.Config.DryRun ? "ON: commands are interpreted but not executed." : "OFF: commands will run.");
             };
+            _pauseItem = new ToolStripMenuItem("Pause listening for the trigger") { CheckOnClick = false };
+            _pauseItem.Click += (s, e) => setPaused(!isPaused());
             var cfgFolder = new ToolStripMenuItem("Open config folder");
             cfgFolder.Click += (s, e) => Shell(AppPaths.ConfigDir);
             var logFolder = new ToolStripMenuItem("Open log folder");
@@ -39,25 +44,37 @@ namespace FlowCommand.UI
                 _host.Reload();
                 reloaded();
             };
+            var privacy = new ToolStripMenuItem("Privacy policy");
+            privacy.Click += (s, e) => OpenUrl(AppLinks.Privacy);
+            var report = new ToolStripMenuItem("Report a problem or get support");
+            report.Click += (s, e) => OpenUrl(AppLinks.Support);
             var quit = new ToolStripMenuItem("Exit");
             quit.Click += (s, e) => exit();
 
             menu.Items.AddRange(new ToolStripItem[]
             {
-                open, settings, new ToolStripSeparator(), _dryRunItem, reload, cfgFolder, logFolder,
-                new ToolStripSeparator(), quit,
+                open, settings, new ToolStripSeparator(), _pauseItem, _dryRunItem, reload, cfgFolder, logFolder,
+                new ToolStripSeparator(), privacy, report, new ToolStripSeparator(), quit,
             });
-            menu.Opening += (s, e) => _dryRunItem.Checked = _host.Config.DryRun;
+            menu.Opening += (s, e) =>
+            {
+                _dryRunItem.Checked = _host.Config.DryRun;
+                _pauseItem.Checked = isPaused();
+            };
 
+            _baseText = "FlowCommand " + VersionText();
             _icon = new NotifyIcon
             {
-                Icon = MakeIcon(),
-                Text = "FlowCommand " + VersionText(),
+                Icon = LoadIcon(),
+                Text = _baseText,
                 ContextMenuStrip = menu,
                 Visible = true,
             };
             _icon.DoubleClick += (s, e) => openPalette();
         }
+
+        /// <summary>Shows in the tooltip whether FlowCommand is listening for its trigger.</summary>
+        public void SetPaused(bool paused) => _icon.Text = paused ? _baseText + " (paused)" : _baseText;
 
         private static string VersionText()
         {
@@ -72,6 +89,12 @@ namespace FlowCommand.UI
             _icon.ShowBalloonTip(4000);
         }
 
+        private static void OpenUrl(string url)
+        {
+            try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
+            catch { }
+        }
+
         private static void Shell(string path)
         {
             try
@@ -80,6 +103,20 @@ namespace FlowCommand.UI
                 Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
             }
             catch { }
+        }
+
+        /// <summary>The app icon from the embedded .ico at the size Windows wants for the tray; a drawn fallback if that fails.</summary>
+        private static Icon LoadIcon()
+        {
+            try
+            {
+                var info = System.Windows.Application.GetResourceStream(new Uri("pack://application:,,,/Assets/FlowCommand.ico"));
+                if (info != null)
+                    using (var stream = info.Stream)
+                        return new Icon(stream, SystemInformation.SmallIconSize);
+            }
+            catch (Exception) { }
+            return MakeIcon();
         }
 
         private static Icon MakeIcon()

@@ -3,11 +3,12 @@
   // Comments and trailing commas are allowed. This file never contains secrets: API keys are stored
   // encrypted with Windows DPAPI (Settings window) or read from GEMINI_API_KEY / GOOGLE_API_KEY / ANTHROPIC_API_KEY.
 
-  "configVersion": 2,
+  "configVersion": 3,
+  "firstRunCompleted": true,             // set to false to see the welcome screen again
 
   // ---- AI provider ----
-  "provider": "gemini",                  // "gemini" or "anthropic"
-  "model": "gemini-3.5-flash-lite",      // any model id your key can use, e.g. "gemini-3.8-flash" or "claude-haiku-5-5"
+  "provider": "local",                   // "local" (offline, no key) | "gemini" | "anthropic" (your own API key)
+  "model": "offline",                    // for gemini/anthropic: any model id your key can use, e.g. "gemini-3.5-flash-lite" or "claude-haiku-5-5"
   "geminiThinkingLevel": "low",          // Gemini only: minimal | low | medium | high | "" (model default). Lower is faster.
   "requestTimeoutSeconds": 30,           // 5-60
 

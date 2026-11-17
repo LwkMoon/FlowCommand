@@ -1,7 +1,7 @@
 # Command reference
 
-Everything FlowCommand can do out of the box. You don't need exact phrases: the AI maps what you say to one of the actions below,
-then FlowCommand validates it and checks its risk level before running it. Add your own apps, websites, folders and projects in
+Everything FlowCommand can do out of the box. You don't need exact phrases: in online AI mode the AI maps what you say to one of the actions below,
+and in the default offline mode built-in rules do the same for common phrasings ("open Chrome", "volume up", "what is using port 3000"). Either way FlowCommand then validates the result and checks its risk level before running it. Add your own apps, websites, folders and projects in
 `config.json` (see [`config.example.json`](../config.example.json)); nothing here needs code changes.
 
 > This page is generated from the same data the application ships with. It lists what is *built in*; your own configuration can add more.
@@ -151,13 +151,13 @@ Apps without it (Store apps, Windows tools, console windows) can still be **open
 
 | Say | Id | Also answers to | Close/switch |
 |---|---|---|---|
-| Google Chrome | `chrome` | — | ✓ |
-| Microsoft Edge | `edge` | — | ✓ |
+| Google Chrome | `chrome` | - | ✓ |
+| Microsoft Edge | `edge` | - | ✓ |
 | Firefox | `firefox` | mozilla firefox | ✓ |
 | Opera GX | `operagx` | gx | ✓ |
 | Opera | `opera` | opera browser | ✓ |
 | Brave | `brave` | brave browser | ✓ |
-| Vivaldi | `vivaldi` | — | ✓ |
+| Vivaldi | `vivaldi` | - | ✓ |
 
 ### Editors and IDEs
 
@@ -165,24 +165,24 @@ Apps without it (Store apps, Windows tools, console windows) can still be **open
 |---|---|---|---|
 | Visual Studio Code | `vscode` | code | ✓ |
 | Cursor | `cursor` | cursor editor | ✓ |
-| Notepad | `notepad` | — | ✓ |
+| Notepad | `notepad` | - | ✓ |
 | Notepad++ | `notepadpp` | notepad plus plus | ✓ |
-| Sublime Text | `sublime` | — | ✓ |
-| Visual Studio | `visualstudio` | — | ✓ |
+| Sublime Text | `sublime` | - | ✓ |
+| Visual Studio | `visualstudio` | - | ✓ |
 | IntelliJ IDEA | `intellij` | idea | ✓ |
-| PyCharm | `pycharm` | — | ✓ |
-| Android Studio | `androidstudio` | — | ✓ |
+| PyCharm | `pycharm` | - | ✓ |
+| Android Studio | `androidstudio` | - | ✓ |
 
 ### Developer tools and terminals
 
 | Say | Id | Also answers to | Close/switch |
 |---|---|---|---|
-| GitHub Desktop | `githubdesktop` | — | ✓ |
-| Postman | `postman` | — | ✓ |
-| Docker Desktop | `docker` | — | ✓ |
+| GitHub Desktop | `githubdesktop` | - | ✓ |
+| Postman | `postman` | - | ✓ |
+| Docker Desktop | `docker` | - | ✓ |
 | Windows Terminal | `terminal` | wt | ✓ |
-| Command Prompt | `cmd` | cmd.exe | — |
-| PowerShell | `powershell` | windows powershell | — |
+| Command Prompt | `cmd` | cmd.exe | - |
+| PowerShell | `powershell` | windows powershell | - |
 
 ### Office, email, notes and PDF
 
@@ -190,46 +190,46 @@ Apps without it (Store apps, Windows tools, console windows) can still be **open
 |---|---|---|---|
 | Microsoft Word | `word` | ms word | ✓ |
 | Microsoft Excel | `excel` | ms excel | ✓ |
-| Microsoft PowerPoint | `powerpoint` | — | ✓ |
-| Microsoft Outlook | `outlook` | — | ✓ |
-| OneNote | `onenote` | — | ✓ |
-| Thunderbird | `thunderbird` | — | ✓ |
-| Notion | `notion` | — | ✓ |
-| Obsidian | `obsidian` | — | ✓ |
+| Microsoft PowerPoint | `powerpoint` | - | ✓ |
+| Microsoft Outlook | `outlook` | - | ✓ |
+| OneNote | `onenote` | - | ✓ |
+| Thunderbird | `thunderbird` | - | ✓ |
+| Notion | `notion` | - | ✓ |
+| Obsidian | `obsidian` | - | ✓ |
 | Adobe Acrobat | `acrobat` | pdf reader | ✓ |
 
 ### Chat and meetings
 
 | Say | Id | Also answers to | Close/switch |
 |---|---|---|---|
-| Discord | `discord` | — | ✓ |
-| Slack | `slack` | — | ✓ |
-| Microsoft Teams | `teams` | — | ✓ |
-| Zoom | `zoom` | — | ✓ |
-| Telegram | `telegram` | — | ✓ |
-| WhatsApp | `whatsapp` | — | — |
-| Signal | `signal` | — | ✓ |
+| Discord | `discord` | - | ✓ |
+| Slack | `slack` | - | ✓ |
+| Microsoft Teams | `teams` | - | ✓ |
+| Zoom | `zoom` | - | ✓ |
+| Telegram | `telegram` | - | ✓ |
+| WhatsApp | `whatsapp` | - | - |
+| Signal | `signal` | - | ✓ |
 
 ### Media, recording and creative
 
 | Say | Id | Also answers to | Close/switch |
 |---|---|---|---|
-| Spotify | `spotify` | — | ✓ |
+| Spotify | `spotify` | - | ✓ |
 | VLC | `vlc` | vlc media player | ✓ |
-| OBS Studio | `obs` | — | ✓ |
-| Audacity | `audacity` | — | ✓ |
+| OBS Studio | `obs` | - | ✓ |
+| Audacity | `audacity` | - | ✓ |
 | DaVinci Resolve | `davinci` | resolve | ✓ |
-| Adobe Photoshop | `photoshop` | — | ✓ |
-| Adobe Illustrator | `illustrator` | — | ✓ |
+| Adobe Photoshop | `photoshop` | - | ✓ |
+| Adobe Illustrator | `illustrator` | - | ✓ |
 | Adobe Premiere Pro | `premiere` | premiere pro, adobe premiere | ✓ |
-| Figma | `figma` | — | ✓ |
-| Blender | `blender` | — | ✓ |
+| Figma | `figma` | - | ✓ |
+| Blender | `blender` | - | ✓ |
 
 ### Games
 
 | Say | Id | Also answers to | Close/switch |
 |---|---|---|---|
-| Steam | `steam` | — | ✓ |
+| Steam | `steam` | - | ✓ |
 | Epic Games Launcher | `epicgames` | epic | ✓ |
 
 ### Windows tools and utilities
@@ -237,20 +237,20 @@ Apps without it (Store apps, Windows tools, console windows) can still be **open
 | Say | Id | Also answers to | Close/switch |
 |---|---|---|---|
 | Task Manager | `taskmanager` | taskmgr | ✓ |
-| File Explorer | `fileexplorer` | explorer | — |
-| Calculator | `calculator` | calc | — |
-| Paint | `paint` | mspaint | — |
-| Snipping Tool | `snippingtool` | snip | — |
-| Control Panel | `controlpanel` | — | — |
-| Device Manager | `devicemanager` | — | — |
-| Disk Management | `diskmanagement` | — | — |
-| Event Viewer | `eventviewer` | — | — |
-| Services | `services` | windows services | — |
-| Resource Monitor | `resourcemonitor` | resmon | — |
-| 7-Zip | `sevenzip` | — | ✓ |
-| PowerToys | `powertoys` | — | ✓ |
-| Bitwarden | `bitwarden` | — | ✓ |
-| TeamViewer | `teamviewer` | — | ✓ |
+| File Explorer | `fileexplorer` | explorer | - |
+| Calculator | `calculator` | calc | - |
+| Paint | `paint` | mspaint | - |
+| Snipping Tool | `snippingtool` | snip | - |
+| Control Panel | `controlpanel` | - | - |
+| Device Manager | `devicemanager` | - | - |
+| Disk Management | `diskmanagement` | - | - |
+| Event Viewer | `eventviewer` | - | - |
+| Services | `services` | windows services | - |
+| Resource Monitor | `resourcemonitor` | resmon | - |
+| 7-Zip | `sevenzip` | - | ✓ |
+| PowerToys | `powertoys` | - | ✓ |
+| Bitwarden | `bitwarden` | - | ✓ |
+| TeamViewer | `teamviewer` | - | ✓ |
 
 ### Categories (“open my browser”)
 

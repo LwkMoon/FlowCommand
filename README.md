@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="assets/banner.svg" alt="FlowCommand — speak naturally and control Windows" width="100%" />
+<img src="assets/banner.svg" alt="FlowCommand - speak naturally and control Windows" width="100%" />
 
 ### Speak naturally. Let Windows do the rest.
 
-FlowCommand turns **Wispr Flow's text output** into structured, AI-interpreted commands for Windows — without building another speech-recognition engine or keeping a microphone open.
+FlowCommand turns a short spoken or typed command into one validated action on your PC. It works **offline out of the box**, pairs well with dictation tools such as Wispr Flow, and can optionally use your own Gemini or Claude key for free-form wording. No speech engine, no microphone access, no telemetry.
 
 <p>
   <img alt="Platform" src="https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-6476c8?style=for-the-badge&logo=windows&logoColor=white">
@@ -17,6 +17,8 @@ FlowCommand turns **Wispr Flow's text output** into structured, AI-interpreted c
 
 <p>
   <a href="https://github.com/LwkMoon/FlowCommand/releases/latest">Downloads</a>
+  &nbsp;·&nbsp;
+  <a href="#install">Install</a>
   &nbsp;·&nbsp;
   <a href="#quick-start">Quick start</a>
   &nbsp;·&nbsp;
@@ -35,20 +37,27 @@ FlowCommand turns **Wispr Flow's text output** into structured, AI-interpreted c
 
 ## What is FlowCommand?
 
-**Wispr Flow is the input. FlowCommand is the action layer.**
+**Your dictation or keyboard is the input. FlowCommand is the action layer.**
 
-Wispr Flow already does the difficult part: turning speech into clean text. FlowCommand takes that text, asks an AI provider to identify the intended Windows action, validates the response locally, and runs only an action that is explicitly supported by the application.
+A dictation tool such as Wispr Flow already does the difficult part: turning speech into clean text. FlowCommand takes that text (or anything you type), works out the intended Windows action, validates the result locally, and runs only an action that is explicitly supported by the application.
 
-There is no second speech-recognition engine, no microphone capture inside FlowCommand, and no always-listening voice assistant. A small command palette receives the text that Wispr Flow inserts into it.
+There is no speech-recognition engine, no microphone capture inside FlowCommand, and no always-listening voice assistant. A small command palette receives the text that your dictation tool inserts into it.
+
+Commands are understood in one of two ways, chosen on the first-run welcome screen and changeable in Settings:
+
+| Mode | What it needs | What leaves your PC |
+|---|---|---|
+| **Offline** (default) | Nothing | Nothing |
+| **Online AI** (Gemini or Claude) | Your own API key | The text of each command, sent to the provider you chose |
 
 <img src="assets/architecture.svg" alt="FlowCommand pipeline: Wispr Flow, AI interpretation, local validation, Windows action" width="100%">
 
 ### The idea
 
 1. Open the FlowCommand palette by double-tapping the **backtick** key (the one to the left of **1**).
-2. Use the normal Wispr Flow hotkey and speak naturally.
-3. Wispr Flow inserts the transcript into the palette.
-4. Gemini or Claude maps the text to one structured action.
+2. Speak with your dictation tool (for example the usual Wispr Flow hotkey), or just type.
+3. The text appears in the palette.
+4. FlowCommand maps the text to one structured action: offline rules by default, or Gemini or Claude if you chose online AI.
 5. FlowCommand validates the action, checks its local risk policy, and runs it when allowed.
 
 For example:
@@ -66,20 +75,23 @@ For example:
 | “Search for the best pizza near me” | Run a web search in your browser |
 | “Take a screenshot” | Save a full-screen screenshot |
 
-> **Wispr Flow is required.** FlowCommand is an independent companion application, not a replacement for Wispr Flow and not an official Wispr product or integration.
+> **Wispr Flow is optional.** FlowCommand does not talk to Wispr Flow or depend on it. It works with any tool that types text, including your keyboard. FlowCommand is an independent project, not a replacement for Wispr Flow and not an official Wispr product or integration.
+
+Offline mode understands the common phrasings in the table above and in the [command reference](docs/commands.md) (open, close, switch, volume, screenshots and so on). Free-form requests such as "get me to my invoices from last month" need online AI.
 
 ## Why FlowCommand?
 
 Most voice-control tools bring their own speech engine, microphone handling, command interface, and setup. FlowCommand takes a smaller approach: use the dictation tool already installed and add a local, configurable action layer on top.
 
-- **Use the dictation you already trust.** Wispr Flow handles speech recognition and transcript cleanup.
+- **Use the dictation you already trust.** Tools such as Wispr Flow handle speech recognition and transcript cleanup.
 - **No microphone capture in FlowCommand.** The application receives text, not audio.
-- **Bring your own AI key.** Choose Google Gemini or Anthropic Claude and enter your own API key.
+- **Works with no account.** Offline mode needs no key and sends nothing anywhere.
+- **Optional online AI.** Choose Google Gemini or Anthropic Claude and enter your own API key for free-form wording.
 - **Local action execution.** Windows actions are handled by the desktop application, not by a remote automation service.
 - **Ready on day one.** 65 applications, 69 websites, 14 folders, and 36 Settings pages are built in. See the [command reference](docs/commands.md).
 - **Configurable.** Add application aliases, websites, project folders, and named folders without changing code.
 - **Safety checks stay local.** The model cannot invent a PowerShell command or bypass the action allowlist.
-- **No telemetry.** FlowCommand has no analytics and no update check. Its only network traffic is the request to the AI provider you choose.
+- **No telemetry.** FlowCommand has no analytics and no update check. Its only network traffic is the request to the AI provider you choose, and only if you choose one.
 
 ## What it can do
 
@@ -157,20 +169,20 @@ The current command model intentionally maps one dictated request to one action.
 
 ## Requirements
 
-- **Windows 10 version 1809 or newer** (Windows 11 is supported).
-- **[Wispr Flow for Windows](https://wisprflow.ai/)** installed, configured, and working with its normal dictation hotkey.
-- An API key for at least one supported provider:
-  - [Google AI Studio](https://aistudio.google.com/) for Gemini.
-  - [Anthropic Console](https://console.anthropic.com/) for Claude.
-- **For the downloadable build:** nothing extra if you choose the *self-contained* archive. The smaller archive needs the [.NET 10 Windows Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0).
+- **Windows 10 version 1809 or newer** (Windows 11 is supported). See [docs/TESTING.md](docs/TESTING.md) for the versions that have actually been tested.
+- **Optional:** a dictation tool such as [Wispr Flow](https://wisprflow.ai/) or Windows voice typing, if you want to speak commands. Typing works without one.
+- **Optional:** an API key for online AI. [Google AI Studio](https://aistudio.google.com/) for Gemini, or the [Anthropic Console](https://console.anthropic.com/) for Claude.
 - **For building from source:** the .NET 10 SDK.
 
-Each release offers two Windows x64 archives:
+## Install
 
-| Archive | When to choose it |
+| Route | Notes |
 |---|---|
-| `FlowCommand-<version>-win-x64-self-contained.zip` | **Recommended for most people.** Larger, but runs on a PC with nothing else installed. |
-| `FlowCommand-<version>-win-x64.zip` | Smaller. Needs the .NET 10 Desktop Runtime installed. |
+| **Microsoft Store** | Planned. Signed by Microsoft, updates automatically, removes cleanly. Not published yet; see [docs/store/STORE-READINESS.md](docs/store/STORE-READINESS.md). |
+| **GitHub release (zip)** | `FlowCommand-<version>-win-x64-self-contained.zip` runs on a PC with nothing else installed (recommended). `FlowCommand-<version>-win-x64.zip` is smaller but needs the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0). Not code-signed, so SmartScreen may warn. |
+| **From source** | See [Development](#development). |
+
+To uninstall the Store version use Windows Settings, Apps, Installed apps. To remove the zip version, exit FlowCommand from the tray, delete its folder, and delete `%APPDATA%\FlowCommand` and `%LOCALAPPDATA%\FlowCommand`. Either way, **Settings, Delete all my FlowCommand data** removes your saved keys and settings first if you prefer.
 
 ## Quick start
 
@@ -180,18 +192,18 @@ Each release offers two Windows x64 archives:
 2. Download an archive (see [Requirements](#requirements)) and extract it to a folder you control.
 3. Optional: verify the download. Each release includes `SHA256SUMS.txt`; compare it with the result of `Get-FileHash .\<archive>.zip -Algorithm SHA256` in PowerShell.
 4. Run `FlowCommand.exe`.
-5. FlowCommand appears in the Windows system tray. On first launch, Settings opens so an AI provider can be configured.
+5. FlowCommand appears in the Windows system tray and shows a welcome screen that explains how it works and lets you choose offline or online understanding, the trigger, and whether to start with Windows (off by default).
 
 FlowCommand is not code-signed, so Windows SmartScreen may show a warning the first time. Select **More info → Run anyway** if you trust the download source. If there is no release attached yet, build the application from source using the instructions in [Development](#development).
 
-### 2. Add an AI provider key
+### 2. Optional: add an AI provider key
 
-In Settings:
+Skip this to stay offline. To understand free-form wording, open Settings and:
 
-1. Select **Gemini** or **Anthropic**.
+1. Select **Google Gemini** or **Anthropic Claude**.
 2. Check or edit the model ID.
 3. Paste your API key.
-4. Select **Test AI (runs nothing)**.
+4. Select **Test (runs nothing)**.
 5. Save the settings.
 
 The test asks the provider to interpret a harmless sample request; it does not execute a Windows action.
@@ -214,14 +226,14 @@ Once the result is what you expect, turn Dry-run mode off.
 
 ### 4. Open the palette and dictate
 
-The default trigger is **double-tapping the backtick key** — the key to the left of **1**, printed `` ` `` and `~`.
+The default trigger is **double-tapping the backtick key** - the key to the left of **1**, printed `` ` `` and `~`.
 
 1. Click the desktop or another area that does not have a text field focused.
 2. Double-tap the backtick key.
 3. Wait for the FlowCommand palette to appear and focus its input.
-4. Hold the usual Wispr Flow dictation hotkey.
-5. Say a command, such as “Open Chrome”.
-6. Release the Wispr Flow hotkey. The transcript is inserted into FlowCommand.
+4. Use your dictation hotkey (for example Wispr Flow's), or just start typing.
+5. Say or type a command, such as “Open Chrome”.
+6. If dictating, release the hotkey. The transcript is inserted into FlowCommand.
 7. In the default `paste` mode, FlowCommand submits the inserted text after a short quiet period. Press Enter to submit immediately instead.
 
 The palette stays open after an action so another command can be dictated. Press Escape to cancel a pending confirmation, clear the current input, or close the palette. Double-tap the trigger key again to close it too.
@@ -389,8 +401,9 @@ Your existing `config.json` keeps working. Actions that are new in a release are
 
 | Setting | Purpose |
 |---|---|
-| `provider` | `gemini` or `anthropic` |
-| `model` | Model ID sent to the selected provider |
+| `provider` | `local` (offline, default), `gemini` or `anthropic` |
+| `model` | Model ID sent to the selected online provider (ignored offline) |
+| `firstRunCompleted` | `false` shows the welcome screen again |
 | `geminiThinkingLevel` | Gemini thinking hint: `minimal`, `low`, `medium`, `high`, or empty for the model default. Use only values supported by the selected model. |
 | `requestTimeoutSeconds` | AI request timeout, normalised to 5–60 seconds (default 30) |
 | `doubleTapEnabled` | Enables or disables the double-tap trigger |
@@ -466,19 +479,21 @@ FlowCommand uses **your own API key**. Keys entered in Settings are encrypted us
 
 When a command is interpreted, the selected AI provider receives text needed to understand the request. Depending on the settings and the configured commands, that includes:
 
-- The dictated transcript.
+- The dictated or typed command text.
 - The available action names and descriptions.
 - Configured application names, aliases, categories, and default-app mappings.
 - Configured project names and aliases, folder names, and website names.
 - A short history of recent commands and their results when `useConversationContext` is enabled. Up to four turns are held in memory, expire after ten minutes, and are cleared when FlowCommand exits.
 
-**Audio is not sent by FlowCommand.** FlowCommand does not capture or process the microphone. It receives the text inserted by Wispr Flow. Configured executable paths, project and folder locations, and website addresses are not included in the prompt.
+**Audio is not sent by FlowCommand.** FlowCommand does not capture or process the microphone. It receives text typed or inserted by your dictation tool. In offline mode none of this is sent anywhere. Configured executable paths, project and folder locations, and website addresses are not included in the prompt.
 
 Action logs are stored locally in:
 
 ```text
 %LOCALAPPDATA%\FlowCommand\logs
 ```
+
+The Microsoft Store version keeps settings, keys and logs inside the app's own package folder instead (Settings shows the exact path), and Windows removes them when the app is uninstalled. The full data inventory and privacy policy are in [docs/PRIVACY.md](docs/PRIVACY.md).
 
 Transcript logging is off by default. When `logTranscripts` is enabled, dictated text is included in the local log. Review logs before sharing them in a public issue.
 
@@ -500,7 +515,8 @@ The double-tap uses a Windows low-level keyboard hook, described in [Hotkeys and
 
 ## Limitations
 
-- **Wispr Flow is a dependency.** FlowCommand is designed for people who already use it. It does not include a speech engine.
+- **No speech engine.** To speak commands, use a dictation tool such as Wispr Flow or Windows voice typing (the latter is untested). Typing always works.
+- **Offline mode is rule-based.** It handles common English phrasings only. Use online AI for free-form wording or other languages.
 - **Focus detection is best-effort.** Some browsers, Electron apps, custom-drawn text fields, games, and remote sessions may not expose their focused input control reliably. Use `openWhenFocusUnknown: false` for stricter handling or use the optional shortcut.
 - **The double-tap is intentionally gated.** When a text field is detected, it does not open the palette. The optional registered shortcut bypasses this gate.
 - **Store/UWP app support is limited.** Apps with Start Menu shortcuts may launch, but closing or managing their windows is not generally supported without a resolvable process name.
@@ -532,7 +548,7 @@ The double-tap uses a Windows low-level keyboard hook, described in [Hotkeys and
 <summary><strong>Wispr Flow text does not appear in the palette</strong></summary>
 
 - Make sure the FlowCommand palette is visible and its input has focus before dictating.
-- Confirm that Wispr Flow is working in another ordinary text field.
+- Confirm that your dictation tool is working in another ordinary text field.
 - Run both applications at the same Windows privilege level. If Wispr Flow is elevated, Windows may prevent it from inserting text into a non-elevated FlowCommand window.
 - Try pressing Enter after the transcript appears.
 
@@ -565,7 +581,7 @@ The double-tap uses a Windows low-level keyboard hook, described in [Hotkeys and
 - Verify the API key in the provider's console.
 - Confirm that the model ID is available to the account and API endpoint.
 - Check provider usage limits, account billing, and network access.
-- Use **Test AI (runs nothing)** in Settings to test the connection without executing a Windows action.
+- Use **Test (runs nothing)** in Settings to test the connection without executing a Windows action.
 
 </details>
 
@@ -596,7 +612,7 @@ That is expected for media keys and for opening websites or searches: FlowComman
 <details>
 <summary><strong>Windows SmartScreen or antivirus warns about FlowCommand</strong></summary>
 
-FlowCommand is not code-signed, so SmartScreen may warn about a new download. Compare the archive's SHA-256 with `SHA256SUMS.txt` from the release. The double-tap trigger uses a low-level keyboard hook, which some security products flag; see the [keyboard listener note](#keyboard-listener-note) and review `DoubleTapKeyListener.cs`. You can turn the trigger off and use the optional hotkey instead.
+The zip build is not code-signed, so SmartScreen may warn about a new download (the Microsoft Store version is signed by Microsoft). Compare the archive's SHA-256 with `SHA256SUMS.txt` from the release. The double-tap trigger uses a low-level keyboard hook, which some security products flag; see the [keyboard listener note](#keyboard-listener-note) and review `DoubleTapKeyListener.cs`. You can turn the trigger off and use the optional hotkey instead.
 
 </details>
 
@@ -651,6 +667,15 @@ To launch from source with the Dry-run helper:
 
 The helper changes an existing `dryRun: false` setting to `true` before launching. On a first run, create the configuration file by launching FlowCommand once, then use the helper and verify the **DRY RUN** indicator is visible in the palette.
 
+### Microsoft Store package (MSIX)
+
+```powershell
+.\scripts\New-MsixPackage.ps1                 # development build, self-signed, for testing on your own PC
+.\scripts\Install-DevMsix.ps1                 # installs it (administrator PowerShell)
+```
+
+The Store build needs the identity values from Partner Center and produces an unsigned package that Microsoft signs. Everything about it, including what is verified and what is not, is in [docs/store/PACKAGING.md](docs/store/PACKAGING.md).
+
 ### Releases
 
 `scripts/package-release.ps1 -Version v1.0.0` builds both release archives and `SHA256SUMS.txt` into `artifacts/`. Pushing a tag that starts with `v` runs the `release` workflow, which runs the tests, builds those archives, and creates a **draft** GitHub release for you to review and publish. The `build` workflow builds and tests every push and pull request.
@@ -665,10 +690,18 @@ FlowCommand/
 ├── tests/
 │   └── FlowCommand.Tests/      # xUnit tests
 ├── docs/
-│   └── commands.md             # Full command reference
+│   ├── commands.md             # Full command reference
+│   ├── ARCHITECTURE.md         # How the pieces fit together
+│   ├── PRIVACY.md              # Privacy policy and data inventory
+│   ├── TESTING.md              # Manual test plan and recorded results
+│   ├── RELEASE-CHECKLIST.md
+│   └── store/                  # Microsoft Store readiness, packaging and listing drafts
+├── packaging/                  # MSIX manifest template, tile assets, asset generator
 ├── scripts/
 │   ├── build-and-test.ps1      # Restore, build, test, and publish
 │   ├── package-release.ps1     # Build the release archives and checksums
+│   ├── New-MsixPackage.ps1     # Build the MSIX package
+│   ├── Install-DevMsix.ps1     # Install the development MSIX for testing
 │   └── run-dry.ps1             # Run from source with Dry-run enabled
 ├── assets/                     # README media
 ├── .github/                    # CI and release workflows, issue and pull request templates
@@ -678,6 +711,7 @@ FlowCommand/
 ├── CONTRIBUTING.md
 ├── CODE_OF_CONDUCT.md
 ├── SECURITY.md
+├── THIRD-PARTY-NOTICES.md
 ├── LICENSE
 └── README.md
 ```
@@ -694,11 +728,11 @@ The prompt and tool schema are generated from the action catalogue, and the Sett
 
 ### Add an AI provider
 
-Implement `IAiProvider`, add the provider's structured tool-call request/response handling, and register its name and default model in the provider catalogue/factory. Provider output must pass through the same local validation and risk policy as every other provider.
+Implement `IAiProvider`, add the provider's structured tool-call request/response handling, and register its name and default model in the provider catalogue/factory. Provider output must pass through the same local validation and risk policy as every other provider. The offline interpreter (`LocalRuleProvider`) is itself a provider and a good small example.
 
 ## Ideas for later
 
-These are possibilities, not promises: setting an exact volume level, more AI providers (including local models), multi-step routines, a signed installer or `winget` package, and more languages. Issues and pull requests are welcome.
+These are possibilities, not promises: setting an exact volume level, more AI providers (including local models), multi-step routines, a `winget` package, and more languages. Issues and pull requests are welcome.
 
 ## Contributing
 
@@ -716,8 +750,8 @@ FlowCommand is released under the [MIT License](LICENSE). You are free to use, c
 
 ## Acknowledgements
 
-- [Wispr Flow](https://wisprflow.ai/) provides the speech-to-text input used by this companion application.
-- [Google Gemini](https://ai.google.dev/) and [Anthropic Claude](https://www.anthropic.com/) provide the optional AI interpretation APIs.
+- [Wispr Flow](https://wisprflow.ai/) is one of the dictation tools FlowCommand can be used with. It is a separate product by another company.
+- [Google Gemini](https://ai.google.dev/) and [Anthropic Claude](https://www.anthropic.com/) provide the optional online AI interpretation APIs.
 - Built with C#, .NET 10, WPF, Windows APIs, and xUnit.
 
 FlowCommand is an independent community project. It is not affiliated with, sponsored by, or endorsed by Wispr or the AI providers listed above. All product names, logos, and trademarks mentioned are the property of their respective owners and are used only to identify the software FlowCommand works with.

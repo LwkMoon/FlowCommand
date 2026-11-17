@@ -8,7 +8,7 @@
     <Authors>LwkMoon</Authors>
     <Product>FlowCommand</Product>
     <Copyright>Copyright (c) 2026 LwkMoon</Copyright>
-    <Description>Voice-controlled Windows command palette: turns the text Wispr Flow dictates into validated, locally executed Windows actions.</Description>
+    <Description>Command palette for Windows: turns a short spoken or typed command into one validated, locally executed action. Works offline; online AI is optional.</Description>
     <RepositoryUrl>https://github.com/LwkMoon/FlowCommand</RepositoryUrl>
   </PropertyGroup>
 </Project>

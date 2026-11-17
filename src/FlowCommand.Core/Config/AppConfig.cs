@@ -32,12 +32,15 @@ public sealed class ProjectEntry
 public sealed class AppConfig
 {
     /// <summary>Format version written to new files. Files without it (0) come from an older release and are migrated on load.</summary>
-    public const int CurrentVersion = 2;
+    public const int CurrentVersion = 3;
     public int ConfigVersion { get; set; }
 
-    /// <summary>"gemini" (default) or "anthropic".</summary>
-    public string Provider { get; set; } = ProviderCatalog.Gemini;
-    public string Model { get; set; } = ProviderCatalog.DefaultModel(ProviderCatalog.Gemini);
+    /// <summary>False until the welcome screen has been completed once. Configs from older releases count as completed.</summary>
+    public bool FirstRunCompleted { get; set; }
+
+    /// <summary>"local" (default: offline rules, no key), "gemini" or "anthropic" (online, your own API key).</summary>
+    public string Provider { get; set; } = ProviderCatalog.Local;
+    public string Model { get; set; } = ProviderCatalog.DefaultModel(ProviderCatalog.Local);
     public int RequestTimeoutSeconds { get; set; } = 30;
     /// <summary>Gemini only: "minimal", "low", "medium", "high", or "" to use the model default. Lower = faster.</summary>
     public string GeminiThinkingLevel { get; set; } = "low";
