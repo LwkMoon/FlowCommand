@@ -1,0 +1,56 @@
+name: store-package
+
+# Builds the UNSIGNED MSIX to upload to Microsoft Partner Center. Run it by hand from the Actions tab
+# after reserving the app name, and paste the three values from Partner Center > Product identity.
+# Nothing is published or uploaded by this workflow: it only produces a downloadable build artifact.
+
+on:
+  workflow_dispatch:
+    inputs:
+      identity_name:
+        description: "Package/Identity/Name from Partner Center"
+        required: true
+      publisher:
+        description: "Package/Identity/Publisher from Partner Center (starts with CN=)"
+        required: true
+      publisher_display_name:
+        description: "Package/Properties/PublisherDisplayName from Partner Center"
+        required: true
+      version:
+        description: "Three-part version, for example 1.0.1 (must be higher than every version already submitted)"
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Test
+        run: dotnet test tests/FlowCommand.Tests/FlowCommand.Tests.csproj -c Release
+
+      - name: Build Store MSIX
+        shell: pwsh
+        env:
+          IDENTITY_NAME: ${{ inputs.identity_name }}
+          PUBLISHER: ${{ inputs.publisher }}
+          PUBLISHER_DISPLAY_NAME: ${{ inputs.publisher_display_name }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          $params = @{ Target = "store"; IdentityName = $env:IDENTITY_NAME; Publisher = $env:PUBLISHER; PublisherDisplayName = $env:PUBLISHER_DISPLAY_NAME }
+          if ($env:VERSION) { $params.Version = $env:VERSION }
+          ./scripts/New-MsixPackage.ps1 @params
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: flowcommand-msix-store
+          path: |
+            artifacts/msix/*.msix
+            artifacts/msix/SHA256SUMS.txt

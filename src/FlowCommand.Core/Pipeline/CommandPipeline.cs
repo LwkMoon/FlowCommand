@@ -46,7 +46,8 @@ public sealed class CommandPipeline
             _cfg.Model,
             PromptBuilder.BuildSystemPrompt(_cfg),
             PromptBuilder.BuildUserMessage(text, history),
-            PromptBuilder.BuildTool(_cfg));
+            PromptBuilder.BuildTool(_cfg),
+            CommandText: text);
 
         string raw;
         try
@@ -113,7 +114,7 @@ public sealed class CommandPipeline
 
         if (_cfg.DryRun)
         {
-            result = new ActionResult(true, $"[dry run] Would run {plan.Describe()} — {plan.Explanation}", Verified: false, DryRun: true);
+            result = new ActionResult(true, $"[dry run] Would run {plan.Describe()} - {plan.Explanation}", Verified: false, DryRun: true);
         }
         else if (!_handlers.TryGetValue(plan.Action, out var handler))
         {

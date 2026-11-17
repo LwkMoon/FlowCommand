@@ -26,7 +26,7 @@ public static class PromptBuilder
             };
             return p.Name + (p.Required ? "" : "?") + ": " + type;
         });
-        return $"- {a.Name}({string.Join(", ", ps)}) — {a.Description}";
+        return $"- {a.Name}({string.Join(", ", ps)}) - {a.Description}";
     }
 
     public static string BuildSystemPrompt(AppConfig cfg)
@@ -54,14 +54,14 @@ public static class PromptBuilder
         foreach (var a in Allowed(cfg)) sb.AppendLine(Signature(a));
 
         sb.AppendLine();
-        sb.AppendLine("Configured applications (id — display name; aliases; category):");
+        sb.AppendLine("Configured applications (id - display name; aliases; category):");
         if (cfg.Applications.Count == 0) sb.AppendLine("- (none)");
         foreach (var (id, app) in cfg.Applications)
         {
             var extra = app.Aliases
                 .Where(a => NameMatcher.Normalize(a) != NameMatcher.Normalize(id) && NameMatcher.Normalize(a) != NameMatcher.Normalize(app.DisplayName))
                 .ToList();
-            sb.AppendLine($"- {id} — {app.DisplayName}"
+            sb.AppendLine($"- {id} - {app.DisplayName}"
                           + (extra.Count > 0 ? $"; aliases: {string.Join(", ", extra)}" : "")
                           + (string.IsNullOrWhiteSpace(app.Category) ? "" : $"; {app.Category}"));
         }

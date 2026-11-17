@@ -16,26 +16,28 @@
                 <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Provider" VerticalAlignment="Center"/>
-                    <ComboBox x:Name="ProviderBox" Grid.Column="1" IsEditable="False" SelectionChanged="OnProviderChanged">
-                        <ComboBoxItem Content="gemini"/>
-                        <ComboBoxItem Content="anthropic"/>
+                    <ComboBox x:Name="ProviderBox" Grid.Column="1" IsEditable="False" SelectionChanged="OnProviderChanged"
+                              AutomationProperties.Name="Provider">
+                        <ComboBoxItem Content="Offline (no AI, no key)" Tag="local"/>
+                        <ComboBoxItem Content="Google Gemini (your API key)" Tag="gemini"/>
+                        <ComboBoxItem Content="Anthropic Claude (your API key)" Tag="anthropic"/>
                     </ComboBox>
                 </Grid>
-                <Grid Margin="0,0,0,6">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                    <TextBlock Text="Model" VerticalAlignment="Center"/>
-                    <TextBox x:Name="ModelBox" Grid.Column="1" Padding="4"/>
-                </Grid>
-                <Grid Margin="0,0,0,6">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                    <TextBlock Text="API key" VerticalAlignment="Center"/>
-                    <PasswordBox x:Name="KeyBox" Grid.Column="1" Padding="4"/>
-                </Grid>
-                <TextBlock x:Name="KeyState" Margin="110,0,0,6" Foreground="#FF666666" TextWrapping="Wrap"/>
-                <StackPanel Orientation="Horizontal" Margin="110,0,0,4">
-                    <Button x:Name="TestButton" Content="Test AI (runs nothing)" Padding="10,4" Click="OnTest"/>
-                    <Button Content="Remove saved key" Padding="10,4" Margin="8,0,0,0" Click="OnRemoveKey"/>
+                <StackPanel x:Name="OnlineAiPanel">
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <TextBlock Text="Model" VerticalAlignment="Center"/>
+                        <TextBox x:Name="ModelBox" Grid.Column="1" Padding="4" AutomationProperties.Name="Model"/>
+                    </Grid>
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <TextBlock Text="API key" VerticalAlignment="Center"/>
+                        <PasswordBox x:Name="KeyBox" Grid.Column="1" Padding="4" AutomationProperties.Name="API key"/>
+                    </Grid>
+                    <TextBlock x:Name="KeyState" Margin="110,0,0,6" Foreground="#FF666666" TextWrapping="Wrap"/>
+                    <Button Content="Remove saved key" HorizontalAlignment="Left" Padding="10,4" Margin="110,0,0,4" Click="OnRemoveKey"/>
                 </StackPanel>
+                <Button x:Name="TestButton" Content="Test (runs nothing)" HorizontalAlignment="Left" Padding="10,4" Margin="110,0,0,4" Click="OnTest"/>
                 <TextBlock x:Name="TestResult" Margin="110,6,0,0" TextWrapping="Wrap"/>
 
                 <Separator Margin="0,14"/>
@@ -44,10 +46,10 @@
                 <Grid Margin="0,4,0,4">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Trigger key" VerticalAlignment="Center"/>
-                    <ComboBox x:Name="DoubleTapKeyBox" Grid.Column="1" IsEditable="False"/>
+                    <ComboBox x:Name="DoubleTapKeyBox" Grid.Column="1" IsEditable="False" AutomationProperties.Name="Trigger key"/>
                 </Grid>
                 <CheckBox x:Name="IgnoreTextBox" Margin="0,2">
-                    <TextBlock TextWrapping="Wrap" Text="Ignore the double-tap when a text box has focus (so normal Wispr dictation is never interrupted)"/>
+                    <TextBlock TextWrapping="Wrap" Text="Ignore the double-tap when a text box has focus (so normal typing and dictation are never interrupted)"/>
                 </CheckBox>
                 <CheckBox x:Name="UnknownBox" Margin="0,2">
                     <TextBlock TextWrapping="Wrap" Text="If FlowCommand can't tell whether a text box is focused (some browsers/Electron apps), open anyway"/>
@@ -55,7 +57,7 @@
                 <Grid Margin="0,8,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Extra hotkey" VerticalAlignment="Center"/>
-                    <TextBox x:Name="HotkeyBox" Grid.Column="1" Padding="4"
+                    <TextBox x:Name="HotkeyBox" Grid.Column="1" Padding="4" AutomationProperties.Name="Extra hotkey"
                              ToolTip="Optional, e.g. Ctrl+Alt+Space. Always opens the palette, even with a text box focused. Leave empty for none."/>
                 </Grid>
                 <TextBlock Margin="110,0,0,10" TextWrapping="Wrap" Foreground="#FF666666"
@@ -64,18 +66,18 @@
                 <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Auto-run" VerticalAlignment="Center"/>
-                    <ComboBox x:Name="ModeBox" Grid.Column="1">
+                    <ComboBox x:Name="ModeBox" Grid.Column="1" AutomationProperties.Name="Auto-run">
                         <ComboBoxItem Content="paste"/>
                         <ComboBoxItem Content="idle"/>
                         <ComboBoxItem Content="off"/>
                     </ComboBox>
                 </Grid>
                 <TextBlock Margin="110,0,0,6" TextWrapping="Wrap" Foreground="#FF666666"
-                           Text="paste = run shortly after a pasted transcript arrives (recommended for Wispr Flow). idle = run after any text change settles. off = Enter only."/>
+                           Text="paste = run shortly after a pasted transcript arrives (recommended for dictation tools such as Wispr Flow). idle = run after any text change settles. off = Enter only."/>
                 <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Delay (ms)" VerticalAlignment="Center"/>
-                    <TextBox x:Name="DelayBox" Grid.Column="1" Padding="4" Width="90" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="DelayBox" Grid.Column="1" Padding="4" Width="90" HorizontalAlignment="Left" AutomationProperties.Name="Auto-run delay in milliseconds"/>
                 </Grid>
 
                 <Separator Margin="0,14"/>
@@ -92,6 +94,23 @@
                 <TextBlock Text="Allowed actions" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,6"/>
                 <TextBlock Text="Anything unchecked can never be executed, whatever the AI says." Foreground="#FF666666" Margin="0,0,0,6"/>
                 <StackPanel x:Name="ActionsPanel"/>
+
+                <Separator Margin="0,14"/>
+                <TextBlock Text="Dictation tool" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,6" AutomationProperties.HeadingLevel="Level2"/>
+                <TextBlock TextWrapping="Wrap" Foreground="#FF666666"
+                           Text="FlowCommand never uses your microphone and does not need any particular dictation tool: anything that types text into the palette works. Wispr Flow is a separate product from another company, and FlowCommand is not affiliated with it."/>
+                <TextBlock x:Name="WisprStatus" Margin="0,6,0,0" TextWrapping="Wrap"/>
+
+                <Separator Margin="0,14"/>
+                <TextBlock Text="About, privacy and your data" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,6" AutomationProperties.HeadingLevel="Level2"/>
+                <TextBlock x:Name="AboutText" TextWrapping="Wrap" Foreground="#FF666666"/>
+                <TextBlock x:Name="DataLocationText" TextWrapping="Wrap" Foreground="#FF666666" Margin="0,6,0,0"/>
+                <WrapPanel Margin="0,8,0,0">
+                    <Button Content="Privacy policy" Padding="10,4" Margin="0,0,8,6" Click="OnPrivacy"/>
+                    <Button Content="Report a problem or get support" Padding="10,4" Margin="0,0,8,6" Click="OnSupport"/>
+                    <Button Content="Open log folder" Padding="10,4" Margin="0,0,8,6" Click="OnOpenLogs"/>
+                    <Button Content="Delete all my FlowCommand data..." Padding="10,4" Margin="0,0,8,6" Click="OnDeleteData"/>
+                </WrapPanel>
 
                 <Separator Margin="0,14"/>
                 <TextBlock TextWrapping="Wrap" Foreground="#FF666666"

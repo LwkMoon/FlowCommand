@@ -83,6 +83,7 @@ public static class ConfigStore
             foreach (var action in ActionCatalog.AddedInConfigVersion2)
                 if (!c.EnabledActions.Contains(action)) c.EnabledActions.Add(action);
         }
+        if (c.ConfigVersion < 3) c.FirstRunCompleted = true;   // an existing file means this person has already set the app up
         c.ConfigVersion = AppConfig.CurrentVersion;
         c.DefaultApps ??= new();
         c.Applications ??= new();

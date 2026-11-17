@@ -11,7 +11,13 @@
     <AssemblyName>FlowCommand</AssemblyName>
     <RootNamespace>FlowCommand</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\FlowCommand.ico</ApplicationIcon>
+    <!-- Only English text ships, so skip the satellite resource folders of dependencies (smaller package). -->
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
   </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="Assets\FlowCommand.ico" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FlowCommand.Core\FlowCommand.Core.csproj" />
   </ItemGroup>

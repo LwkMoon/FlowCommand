@@ -207,9 +207,12 @@ public class GeminiProviderTests
     }
 
     [Fact]
-    public void Factory_defaults_to_gemini_and_still_supports_anthropic()
+    public void Factory_defaults_to_offline_and_supports_gemini_and_anthropic()
     {
-        Assert.Equal("gemini", AiProviderFactory.Create(Cfg.Default(), new HttpClient(), () => "k").Name);
+        Assert.Equal("local", AiProviderFactory.Create(Cfg.Default(), new HttpClient(), () => "k").Name);
+        var gem = Cfg.Default();
+        gem.Provider = "gemini";
+        Assert.Equal("gemini", AiProviderFactory.Create(gem, new HttpClient(), () => "k").Name);
         var cfg = Cfg.Default();
         cfg.Provider = "anthropic";
         Assert.Equal("anthropic", AiProviderFactory.Create(cfg, new HttpClient(), () => "k").Name);
